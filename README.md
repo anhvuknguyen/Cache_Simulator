@@ -1,5 +1,4 @@
 # Cache_Simulator
-A c++ based cache simulator
 
 A configurable, trace-driven cache simulator built from scratch in C++. Simulates direct-mapped, set-associative, and fully-associative caches with configurable replacement policies, write strategies, and multi-level hierarchy support. Designed as both a learning tool and a performance analysis engine for exploring how cache design decisions affect real-world hit rates.
 
