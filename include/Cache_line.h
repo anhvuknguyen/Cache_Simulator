@@ -15,6 +15,12 @@ private:
 public:
     Cache_line();
     void fill(int t, bool valid, bool dirty);
+    void setTag(int t);
+    void setValidBit(bool valid);
+    void setDirtyBit(bool dirty);
+    int getTag();
+    bool getValidBit();
+    bool getDirtyBit();
 };
 
 #endif

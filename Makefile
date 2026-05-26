@@ -17,13 +17,15 @@ EXECUTABLE = cacheSim
 
 # Source files (all .cpp files)
 SOURCES = 	$(SRC_DIR)/main.cpp \
-			$(SRC_DIR)/Cache_line.cpp
+			$(SRC_DIR)/Cache_line.cpp\
+			$(SRC_DIR)/Cache_set.cpp
 
 # Object files (automatically generated from source files)
 OBJECTS = $(SOURCES:.cpp=.o)
 
 # Header files (for dependency tracking)
-HEADERS = $(INC_DIR)/Cache_line.h
+HEADERS = 	$(INC_DIR)/Cache_line.h \
+			$(INC_DIR)/Cache_set.h
 
 # Default target - builds the executable
 all: $(EXECUTABLE)

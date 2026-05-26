@@ -10,3 +10,23 @@ void Cache_line::fill(int t, bool valid, bool dirty){
     validBit = valid;
     dirtyBit = dirty;
 }
+
+//Getters & Setters
+void Cache_line::setTag(int t){
+    tag = t;
+}
+void Cache_line::setValidBit(bool valid){
+    validBit = valid;
+}
+void Cache_line::setDirtyBit(bool dirty){
+    dirtyBit = dirty;
+}
+int Cache_line::getTag(){
+    return tag;
+}
+bool Cache_line::getValidBit(){
+    return validBit;
+}
+bool Cache_line::getDirtyBit(){
+    return dirtyBit;
+}
