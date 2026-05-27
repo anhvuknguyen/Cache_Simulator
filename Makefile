@@ -7,7 +7,7 @@
 
 # Compiler and compiler flags
 CXX = g++
-CXXFLAGS = -std=c++98 -Wall -g
+CXXFLAGS = -std=c++17 -Wall -g
 SRC_DIR = src
 INC_DIR = include
 OUT_DIR = bin

@@ -1,5 +1,8 @@
 #include "Cache_line.h"
 #include <cstdlib>
+#include <string> 
+
+using namespace std;
 
 //Constructor
 Cache_line::Cache_line() : tag(0), validBit(false), dirtyBit(false){}
@@ -29,4 +32,10 @@ bool Cache_line::getValidBit(){
 }
 bool Cache_line::getDirtyBit(){
     return dirtyBit;
+}
+string Cache_line::toString(){
+    string vStr = getValidBit() ? "1":"0";
+    string dStr = getDirtyBit() ? "1":"0";
+    string tagStr = to_string(getTag());
+    return "Valid: " + vStr + "\t|Dirty: " + dStr + "\t|Tag: " + tagStr;
 }

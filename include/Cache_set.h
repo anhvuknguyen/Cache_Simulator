@@ -2,6 +2,9 @@
 #define CACHE_SET_H
 
 #include "Cache_line.h"
+#include <string> 
+
+using namespace std;
 
 /*
 Cache_set class: 
@@ -21,6 +24,7 @@ public:
     Cache_set& operator=(const Cache_set &other);
     Cache_line& getLine(int index);
     bool contains(int tag);
+    string toString();
 };
 
 #endif

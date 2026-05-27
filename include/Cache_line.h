@@ -1,6 +1,9 @@
 #ifndef CACHE_LINE_H
 #define CACHE_LINE_H
 
+#include <string> 
+
+using namespace std;
 /*
 Cache_line class: 
     tag - tag bits of address currently occupying cache line
@@ -21,6 +24,7 @@ public:
     int getTag();
     bool getValidBit();
     bool getDirtyBit();
+    string toString();
 };
 
 #endif

@@ -1,5 +1,8 @@
 #include "Cache_set.h"
 #include <cstdlib>
+#include <string> 
+
+using namespace std;
 
 //Constructor
 Cache_set::Cache_set(int size){
@@ -46,4 +49,12 @@ bool Cache_set::contains(int tag){
         }
     }
     return false;
+}
+
+string Cache_set::toString(){
+    string str;
+    for(int i=0;i<set_size;i++){
+        str += getLine(i).toString() + "\n";
+    }
+    return str;
 }
