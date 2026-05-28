@@ -18,16 +18,20 @@ OBJ_DIR = obj
 EXECUTABLE = cacheSim
 
 # Source files (all .cpp files)
-SOURCES = 	$(TST_DIR)/test_CacheSetToString.cpp \
+SOURCES = 	$(TST_DIR)/test_CacheArray.cpp \
+			$(SRC_DIR)/Cache_utils.cpp \
 			$(SRC_DIR)/Cache_line.cpp \
-			$(SRC_DIR)/Cache_set.cpp
+			$(SRC_DIR)/Cache_set.cpp \
+			$(SRC_DIR)/Cache.cpp
 
 # Object files (automatically generated from source files)
 OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 
 # Header files (for dependency tracking)
-HEADERS = 	$(INC_DIR)/Cache_line.h \
-			$(INC_DIR)/Cache_set.h
+HEADERS = 	$(INC_DIR)/Cache_utils.h \
+			$(INC_DIR)/Cache_line.h \
+			$(INC_DIR)/Cache_set.h \
+			$(INC_DIR)/Cache.h
 
 # Default target - builds the executable
 all: $(EXECUTABLE)

@@ -3,8 +3,6 @@
 
 #include <string> 
 
-using namespace std;
-
 /*
 Cache_line class: 
     tag - tag bits of address currently occupying cache line
@@ -25,7 +23,7 @@ public:
     int getTag();
     bool getValidBit();
     bool getDirtyBit();
-    string toString();
+    std::string toString();
 };
 
 #endif
