@@ -8,6 +8,7 @@
 class Cache{
 private:
     int cache_size;
+    int num_lines;
     int num_sets;
     int num_Blocks;
     int num_tagBits;

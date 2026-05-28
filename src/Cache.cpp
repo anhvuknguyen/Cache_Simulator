@@ -20,7 +20,8 @@ Cache::Cache(int setSize, int numSets, int numBlocks){
         throw invalid_argument("Number of blocks per line must be a power of 2");
     }
 
-    cache_size = setSize * numSets;
+    cache_size = setSize * numSets * numBlocks;
+    num_lines = setSize * numSets;
     num_sets = numSets;
     num_Blocks = numBlocks;
 
@@ -39,10 +40,11 @@ Cache::Cache(int setSize, int numSets, int numBlocks){
 //ToString
 string Cache::toString(){
     string str;
-    str += "Cache Stats: \n\t       Size: " + to_string(cache_size)  +
-        "\n\t   Tag Bits: " + to_string(num_tagBits) +
-        "\n\t Index Bits: " + to_string(num_indexBits) +
-        "\n\tOffset Bits: " + to_string(num_offsetBits) +
+    str += "Cache Stats: \n\t         Size: " + to_string(cache_size)  +
+        "\n\tNum. of Lines: " + to_string(num_lines) +
+        "\n\t     Tag Bits: " + to_string(num_tagBits) +
+        "\n\t   Index Bits: " + to_string(num_indexBits) +
+        "\n\t  Offset Bits: " + to_string(num_offsetBits) +
         "\n";
     for(int i=0;i<num_sets;i++){
         str+= "---Set " + to_string(i) + "---\n";
