@@ -1,5 +1,6 @@
 # Makefile for Cache_Simulator
-# 
+# Modeled after sample ECE312H Makefile @ The University of Texas at Austin 
+#
 # Usage:
 #   make           - Compile the entire project
 #   make clean     - Remove all compiled files
@@ -11,7 +12,7 @@ CXXFLAGS = -std=c++17 -Wall -g
 SRC_DIR = src
 INC_DIR = include
 OUT_DIR = bin
-TST_DIR = testingScripts
+TST_DIR = testing
 OBJ_DIR = obj
 
 # Executable name
@@ -29,6 +30,7 @@ OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 
 # Header files (for dependency tracking)
 HEADERS = 	$(INC_DIR)/Cache_utils.h \
+			$(INC_DIR)/Types.h \
 			$(INC_DIR)/Cache_line.h \
 			$(INC_DIR)/Cache_set.h \
 			$(INC_DIR)/Cache.h
