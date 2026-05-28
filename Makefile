@@ -11,17 +11,19 @@ CXXFLAGS = -std=c++17 -Wall -g
 SRC_DIR = src
 INC_DIR = include
 OUT_DIR = bin
+TST_DIR = testingScripts
+OBJ_DIR = obj
 
 # Executable name
 EXECUTABLE = cacheSim
 
 # Source files (all .cpp files)
-SOURCES = 	$(SRC_DIR)/main.cpp \
-			$(SRC_DIR)/Cache_line.cpp\
+SOURCES = 	$(TST_DIR)/test_CacheSetToString.cpp \
+			$(SRC_DIR)/Cache_line.cpp \
 			$(SRC_DIR)/Cache_set.cpp
 
 # Object files (automatically generated from source files)
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 
 # Header files (for dependency tracking)
 HEADERS = 	$(INC_DIR)/Cache_line.h \
@@ -30,21 +32,33 @@ HEADERS = 	$(INC_DIR)/Cache_line.h \
 # Default target - builds the executable
 all: $(EXECUTABLE)
 
+# Create required directories
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+$(OUT_DIR):
+	mkdir -p $(OUT_DIR)
+
 # Link object files into executable
-$(EXECUTABLE): $(OBJECTS)
+$(EXECUTABLE): $(OBJECTS) | $(OUT_DIR)
 	@echo "Linking..."
 	$(CXX) -o $(OUT_DIR)/$@ $^
 	@echo "Build complete! Run with: ./$(OUT_DIR)/$(EXECUTABLE)"
 
 # Compile .cpp files into .o object files
-%.o: %.cpp $(HEADERS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
+	@echo "Compiling $<..."
+	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(TST_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
 	@echo "Compiling $<..."
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
 
 # Clean up compiled files
 clean:
 	@echo "Cleaning build files..."
-	rm -f $(OBJECTS) $(OUT_DIR)/$(EXECUTABLE)
+	rm -rf $(OBJ_DIR)
+	rm -f $(OUT_DIR)/$(EXECUTABLE)
 	@echo "Clean complete!"
 
 # Rebuild from scratch

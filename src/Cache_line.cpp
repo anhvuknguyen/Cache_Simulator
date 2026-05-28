@@ -37,5 +37,5 @@ string Cache_line::toString(){
     string vStr = getValidBit() ? "1":"0";
     string dStr = getDirtyBit() ? "1":"0";
     string tagStr = to_string(getTag());
-    return "Valid: " + vStr + "\t|Dirty: " + dStr + "\t|Tag: " + tagStr;
+    return "Valid: " + vStr + " |Dirty: " + dStr + " |Tag: " + tagStr;
 }
