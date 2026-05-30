@@ -1,6 +1,5 @@
-#ifndef TYPES
-#define TYPES
-
+#ifndef TYPES_H
+#define TYPES_H
 
 namespace Cache_types{
     //Mapping Techniques

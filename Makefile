@@ -30,7 +30,8 @@ SOURCES = 	$(TST_DIR)/test_CacheArray.cpp \
 OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 
 # Header files (for dependency tracking)
-HEADERS = 	$(INC_DIR)/Cache_utils.h \
+HEADERS = 	$(INC_DIR)/Cache_library.h \
+			$(INC_DIR)/Cache_utils.h \
 			$(INC_DIR)/Types.h \
 			$(INC_DIR)/Cache_line.h \
 			$(INC_DIR)/Cache_set.h \

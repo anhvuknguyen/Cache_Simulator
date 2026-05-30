@@ -10,6 +10,34 @@ using namespace std;
 using namespace Cache_utils;
 using namespace Cache_types;
 
+//Validate Constructor Inputs
+void Cache::validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy){
+    //Direct mapping does not have a replacement policy
+    if(mapTech==Mapping_Technique::Direct && repPolicy!=Replacement_Policy::Direct){
+        throw invalid_argument("Direct Mapping Technique must use Direct Replacement Policy");
+    }
+    //Direct mapping has no sets, so setSize = 1
+    if(mapTech==Mapping_Technique::Direct && setSize!=1){
+        throw invalid_argument("Direct Mapping Technique must have setSize of 1");
+    }
+
+    //Fully Associative mapping has one set, so setSize = N
+    if(mapTech==Mapping_Technique::Fully_Associative && numSets!=1){
+        throw invalid_argument("Fully_Associative Mapping Technique must have 1 set");
+    }
+
+    //Assert that all numbers are powers of 2
+    if(!isPowerOfTwo(setSize)){ 
+        throw invalid_argument("Size of set must be a power of 2");
+    }
+    if(!isPowerOfTwo(numSets)){
+        throw invalid_argument("Number of sets must be a power of 2");
+    }
+    if(!isPowerOfTwo(numBlocks)){
+        throw invalid_argument("Number of blocks per line must be a power of 2");
+    }
+}
+
 //Constructor Factory
 unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPolicy){
     if(repPolicy==Replacement_Policy::Direct){
@@ -23,25 +51,8 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
 //Constructor
 Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech, Replacement_Policy repPolicy){
 
-    //Direct mapping does not have a replacement policy
-    if(mapTech==Mapping_Technique::Direct && repPolicy!=Replacement_Policy::Direct){
-        throw invalid_argument("Direct Mapping Technique must use Direct Replacement Policy");
-    }
-    //Direct mapping has no sets, so setSize = 1
-    if(mapTech==Mapping_Technique::Direct && setSize!=1){
-        throw invalid_argument("Direct Mapping Technique must have setSize of 1");
-    }
-
-    //Assert that all numbers are powers of 2
-    if(!isPowerOfTwo(setSize)){ 
-        throw invalid_argument("Size of set must be a power of 2");
-    }
-    if(!isPowerOfTwo(numSets)){
-        throw invalid_argument("Number of sets must be a power of 2");
-    }
-    if(!isPowerOfTwo(numBlocks)){
-        throw invalid_argument("Number of blocks per line must be a power of 2");
-    }
+    //Validate Inputs:
+    validateInput(setSize,numSets,numBlocks,mapTech,repPolicy);
     
     mapping_Technique = mapTech;
     replacement_Policy = repPolicy;
