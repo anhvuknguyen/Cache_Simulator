@@ -10,6 +10,16 @@ using namespace std;
 using namespace Cache_utils;
 using namespace Cache_types;
 
+//Constructor Factory
+unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPolicy){
+    if(repPolicy==Replacement_Policy::Direct){
+        return make_unique<Direct_Cache_set>(setSize,repPolicy);
+    }
+    else{
+        throw invalid_argument("Provided replacement policy does not exist");
+    }
+}
+
 //Constructor
 Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech, Replacement_Policy repPolicy){
 
@@ -35,6 +45,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     
     mapping_Technique = mapTech;
     replacement_Policy = repPolicy;
+
     cache_Size = setSize * numSets * numBlocks;
     num_Lines = setSize * numSets;
     num_Sets = numSets;
@@ -48,7 +59,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     }
 
     for(int i=0;i<num_Sets;i++){
-        cacheArr.emplace_back(setSize,repPolicy);
+        cacheArr.push_back(cacheFactory(setSize, repPolicy));
     }
 }
 
@@ -63,7 +74,7 @@ string Cache::toString(){
         "\n";
     for(int i=0;i<num_Sets;i++){
         str+= "---Set " + to_string(i) + "---\n";
-        str+= cacheArr[i].toString();
+        str+= cacheArr[i]->toString();
     }
     return str;
 }

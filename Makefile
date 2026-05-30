@@ -23,6 +23,7 @@ SOURCES = 	$(TST_DIR)/test_CacheArray.cpp \
 			$(SRC_DIR)/Cache_utils.cpp \
 			$(SRC_DIR)/Cache_line.cpp \
 			$(SRC_DIR)/Cache_set.cpp \
+			$(SRC_DIR)/Direct_Cache_set.cpp \
 			$(SRC_DIR)/Cache.cpp
 
 # Object files (automatically generated from source files)
@@ -33,6 +34,7 @@ HEADERS = 	$(INC_DIR)/Cache_utils.h \
 			$(INC_DIR)/Types.h \
 			$(INC_DIR)/Cache_line.h \
 			$(INC_DIR)/Cache_set.h \
+			$(INC_DIR)/Direct_Cache_set.h \
 			$(INC_DIR)/Cache.h
 
 # Default target - builds the executable
