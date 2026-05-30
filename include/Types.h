@@ -18,8 +18,22 @@ namespace Cache_types{
         LIFO,
         MRU,
         LRU,
-        Pseudo_LRU,
-        LFU
+        LFU,
+        Belady
+    };
+
+    //Write Strategy
+    enum class Write_Strategy:char{
+        Write_Back,
+        Write_Through
+    };
+
+    //Cache Miss Types
+    enum class Miss_Types:char{
+        Hit,
+        Compulsory_Miss,
+        Conflict_Miss,
+        Capacity_Miss
     };
 }
 #endif

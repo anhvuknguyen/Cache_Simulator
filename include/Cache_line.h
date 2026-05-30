@@ -26,4 +26,11 @@ public:
     std::string toString();
 };
 
+class Cache_line_FIFO : public Cache_line{
+private:
+    bool isHead;
+public:
+    Cache_line_FIFO();
+};
+
 #endif
