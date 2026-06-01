@@ -20,3 +20,7 @@ Direct_Cache_set::~Direct_Cache_set(){
 string Direct_Cache_set::toString(){
     return line->toString()+"\n";
 }
+
+Miss_Type lookup(Cache_types::Operation op, int address){
+    
+}

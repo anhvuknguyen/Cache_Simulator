@@ -28,11 +28,17 @@ namespace Cache_types{
     };
 
     //Cache Miss Types
-    enum class Miss_Types:char{
+    enum class Miss_Type:char{
         Hit,
         Compulsory_Miss,
         Conflict_Miss,
         Capacity_Miss
+    };
+
+    //Operation
+    enum class Operation:char{
+        Read,
+        Write
     };
 }
 #endif

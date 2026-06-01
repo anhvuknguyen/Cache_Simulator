@@ -25,6 +25,7 @@ public:
     Cache_set(int setSize, Cache_types::Replacement_Policy repPolicy);
     virtual ~Cache_set();
     std::string virtual toString() = 0;
+    Cache_types::Miss_Type virtual lookup(Cache_types::Operation op, int address) = 0;
 };
 
 #endif
