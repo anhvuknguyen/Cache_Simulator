@@ -21,6 +21,6 @@ string Direct_Cache_set::toString(){
     return line->toString()+"\n";
 }
 
-Miss_Type lookup(Cache_types::Operation op, int address){
-    
+Miss_Type Direct_Cache_set::lookup(Cache_types::Operation op, int address){
+    return Miss_Type::Capacity_Miss;
 }

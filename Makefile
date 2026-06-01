@@ -19,7 +19,7 @@ OBJ_DIR = obj
 EXECUTABLE = cacheSim
 
 # Source files (all .cpp files)
-SOURCES = 	$(TST_DIR)/test_CacheArray.cpp \
+SOURCES = 	$(TST_DIR)/test_readFile.cpp \
 			$(SRC_DIR)/Cache_utils.cpp \
 			$(SRC_DIR)/Cache_line.cpp \
 			$(SRC_DIR)/Cache_set.cpp \
