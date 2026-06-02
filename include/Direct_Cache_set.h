@@ -12,7 +12,10 @@ public:
     Direct_Cache_set(int setSize, Cache_types::Replacement_Policy repPolicy);
     ~Direct_Cache_set() override;
     std::string toString() override;
-    Cache_types::Miss_Type lookup(Cache_types::Operation op, int address) override;
+
+    Cache_types::Miss_Type lookup(int tag) override;
+    int evict() override;
+    int insert(int tag) override;
 };
 
 #endif

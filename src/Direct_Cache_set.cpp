@@ -21,6 +21,33 @@ string Direct_Cache_set::toString(){
     return line->toString()+"\n";
 }
 
-Miss_Type Direct_Cache_set::lookup(Cache_types::Operation op, int address){
-    return Miss_Type::Capacity_Miss;
+Miss_Type Direct_Cache_set::lookup(int tag){
+    if(line->getTag() == tag){
+        return Miss_Type::Hit;
+    }
+    else{
+        return Miss_Type::Miss;
+    }
+}
+
+int Direct_Cache_set::evict(){
+    if(isFull()){
+        line->fill(0, 0, 0);
+        decrementCapacity();
+        return 1;
+    } 
+    else{
+        return -1;
+    }
+}
+
+int Direct_Cache_set::insert(int tag){
+    if(line->getTag()!=tag){
+        line->fill(tag,1,0);
+        incrementCapacity();
+        return 1;
+    }
+    else{
+        return -1;
+    }
 }

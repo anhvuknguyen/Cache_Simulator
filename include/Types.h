@@ -30,9 +30,7 @@ namespace Cache_types{
     //Cache Miss Types
     enum class Miss_Type:char{
         Hit,
-        Compulsory_Miss,
-        Conflict_Miss,
-        Capacity_Miss
+        Miss
     };
 
     //Operation

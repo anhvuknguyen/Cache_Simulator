@@ -49,7 +49,7 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
 }
 
 //Constructor
-Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech, Replacement_Policy repPolicy){
+Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech, Replacement_Policy repPolicy) : hit_Count(0), miss_Count(0), compulsory_Miss_Count(0), capacity_Miss_Count(0), conflict_Miss_Count(0) {
 
     //Validate Inputs:
     validateInput(setSize,numSets,numBlocks,mapTech,repPolicy);
@@ -77,7 +77,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
 //ToString
 string Cache::toString(){
     string str;
-    str += "Cache Stats: \n\t         Size: " + to_string(cache_Size)  +
+    str += "Cache: \n\t         Size: " + to_string(cache_Size)  +
         "\n\tNum. of Lines: " + to_string(num_Lines) +
         "\n\t     Tag Bits: " + to_string(num_TagBits) +
         "\n\t   Index Bits: " + to_string(num_IndexBits) +
@@ -88,4 +88,55 @@ string Cache::toString(){
         str+= cacheArr[i]->toString();
     }
     return str;
+}
+
+string Cache::getStats(){
+    string str;
+    str += "Cache Stats: \n\t             Hits: " + to_string(hit_Count) +
+        "\n\t           Misses: " + to_string(miss_Count) +
+        "\n\tCompulsory Misses: " + to_string(compulsory_Miss_Count) +
+        "\n\t  Conflict Misses: " + to_string(conflict_Miss_Count) +
+        "\n\t  Capacity Misses: " + to_string(capacity_Miss_Count) +
+        "\n";
+    return str;
+}
+
+int Cache::access(Cache_types::Operation op, unsigned int address){
+    int offset = address & ((1<<num_OffsetBits)-1);
+    int index = (address >> num_OffsetBits) & ((1<<num_IndexBits)-1);
+    int tag = (address >> (num_OffsetBits+num_IndexBits)) & ((1<<num_TagBits)-1);
+    
+    if(op==Operation::Read){
+        Miss_Type miss_T = cacheArr[index]->lookup(tag);
+        if(miss_T==Miss_Type::Hit){
+            hit_Count++;
+            return 1;
+        }
+        else if(miss_T==Miss_Type::Miss){
+            miss_Count++;
+            classifyMiss(tag);
+            if(cacheArr[index]->isFull()){
+                cacheArr[index]->evict();
+                cacheArr[index]->insert(tag);
+            }
+            else{
+                cacheArr[index]->insert(tag);
+            }
+        }
+    }
+    return -1;
+}
+
+//Classify Miss
+void Cache::classifyMiss(int tag){
+    if(!tagSet.count(tag)){
+        tagSet.insert(tag);
+        compulsory_Miss_Count++;
+        return;
+    }
+    // ***MUST IMPLEMENT CAPACITY MISS***
+    else{
+        conflict_Miss_Count++;
+        return;
+    }
 }

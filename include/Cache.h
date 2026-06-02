@@ -6,6 +6,7 @@
 #include "Types.h"
 #include <string> 
 #include <vector>
+#include <set>
 
 class Cache{
 private:
@@ -15,16 +16,33 @@ private:
     int num_Lines;
     int num_Sets;
     int num_Blocks;
+    
+    //Address Split
     int num_TagBits;
     int num_IndexBits;
     int num_OffsetBits;
+
+    //Cache Stats
+    int hit_Count;
+    int miss_Count;
+    int compulsory_Miss_Count;
+    int capacity_Miss_Count;
+    int conflict_Miss_Count;
+
+    //Actual Array of Sets
     std::vector<std::unique_ptr<Cache_set>> cacheArr;
+
+    //Miss Classification Structures
+    std::set<int> tagSet;   //For Compulsory misses
 
     void validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::unique_ptr<Cache_set> cacheFactory(int setSize, Cache_types::Replacement_Policy repPolicy);
+    void classifyMiss(int tag);
 public:
     Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::string toString();
+    std::string getStats();
+    int access(Cache_types::Operation op, unsigned int address);
 };
 
 #endif

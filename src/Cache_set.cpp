@@ -16,3 +16,15 @@ Cache_set::Cache_set(int setSize, Replacement_Policy repPolicy){
 }
 
 Cache_set::~Cache_set() = default;
+
+bool Cache_set::isFull(){
+    return capacity == set_Size;
+}
+
+void Cache_set::incrementCapacity(){
+    capacity+=1;
+}
+
+void Cache_set::decrementCapacity(){
+    capacity-=1;
+}
