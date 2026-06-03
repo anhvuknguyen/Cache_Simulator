@@ -74,15 +74,9 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     }
 }
 
-//ToString
-string Cache::toString(){
+//Debugging Strings
+string Cache::viewCache(){
     string str;
-    str += "Cache: \n\t         Size: " + to_string(cache_Size)  +
-        "\n\tNum. of Lines: " + to_string(num_Lines) +
-        "\n\t     Tag Bits: " + to_string(num_TagBits) +
-        "\n\t   Index Bits: " + to_string(num_IndexBits) +
-        "\n\t  Offset Bits: " + to_string(num_OffsetBits) +
-        "\n";
     for(int i=0;i<num_Sets;i++){
         str+= "---Set " + to_string(i) + "---\n";
         str+= cacheArr[i]->toString();
@@ -92,6 +86,12 @@ string Cache::toString(){
 
 string Cache::getStats(){
     string str;
+    str += "Cache: \n\t             Size: " + to_string(cache_Size)  +
+        "\n\t    Num. of Lines: " + to_string(num_Lines) +
+        "\n\t         Tag Bits: " + to_string(num_TagBits) +
+        "\n\t       Index Bits: " + to_string(num_IndexBits) +
+        "\n\t      Offset Bits: " + to_string(num_OffsetBits) +
+        "\n";
     str += "Cache Stats: \n\t             Hits: " + to_string(hit_Count) +
         "\n\t           Misses: " + to_string(miss_Count) +
         "\n\tCompulsory Misses: " + to_string(compulsory_Miss_Count) +
@@ -114,7 +114,7 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
         }
         else if(miss_T==Miss_Type::Miss){
             miss_Count++;
-            classifyMiss(tag);
+            classifyMiss(address);
             if(cacheArr[index]->isFull()){
                 cacheArr[index]->evict();
                 cacheArr[index]->insert(tag);
@@ -128,9 +128,10 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
 }
 
 //Classify Miss
-void Cache::classifyMiss(int tag){
-    if(!tagSet.count(tag)){
-        tagSet.insert(tag);
+void Cache::classifyMiss(unsigned int address){
+    int blockAddress = address >> num_OffsetBits;
+    if(!blockSet.count(blockAddress)){
+        blockSet.insert(blockAddress);
         compulsory_Miss_Count++;
         return;
     }
