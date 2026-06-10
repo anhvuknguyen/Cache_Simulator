@@ -14,3 +14,52 @@ LRU_Cache_set::LRU_Cache_set(int setSize, Cache_types::Replacement_Policy repPol
     lineList = new list<Cache_line>();
     lineMap = new unordered_map<int,list<Cache_line>::iterator>();
 }
+
+LRU_Cache_set::~LRU_Cache_set() {
+    delete lineList;
+    delete lineMap;
+}
+
+string LRU_Cache_set::toString() {
+    string str;
+    list<Cache_line>::iterator it;
+    for(it = lineList->begin(); it!=lineList->end();it++){
+        str+=it->toString()+"\n";
+    }
+    return str;
+}
+
+Miss_Type LRU_Cache_set::lookup(int tag){
+    auto targetIt = lineMap->find(tag);
+    if(targetIt==lineMap->end()){
+        return Miss_Type::Miss;
+    }
+    else{
+        lineList->splice(lineList->begin(),*lineList,targetIt->second);
+        (*lineMap)[tag] = lineList->begin();
+        return Miss_Type::Hit;
+    }
+}
+
+int LRU_Cache_set::evict(){
+    if(isFull()){
+        int tag = lineList->back().getTag();
+        lineList->pop_back();
+        lineMap->erase(tag);
+        return 1;
+    }
+    else{
+        return -1;
+    }
+}
+
+int LRU_Cache_set::insert(int tag){
+    if(lineMap->find(tag)!=lineMap->end()){
+        return -1;
+    }
+    lineList->emplace_front();
+    lineList->front().setTag(tag);
+    lineList->front().setValidBit(true);
+    lineMap->insert({tag,lineList->begin()});
+    return 1;
+}

@@ -19,11 +19,12 @@ OBJ_DIR = obj
 EXECUTABLE = cacheSim
 
 # Source files (all .cpp files)
-SOURCES = 	$(TST_DIR)/test_DirectMapLookup.cpp \
+SOURCES = 	$(TST_DIR)/test_LRUMapAccess.cpp \
 			$(SRC_DIR)/Cache_utils.cpp \
 			$(SRC_DIR)/Cache_line.cpp \
 			$(SRC_DIR)/Cache_set.cpp \
 			$(SRC_DIR)/Direct_Cache_set.cpp \
+			$(SRC_DIR)/LRU_Cache_set.cpp \
 			$(SRC_DIR)/Cache.cpp
 
 # Object files (automatically generated from source files)
@@ -36,6 +37,7 @@ HEADERS = 	$(INC_DIR)/Cache_library.h \
 			$(INC_DIR)/Cache_line.h \
 			$(INC_DIR)/Cache_set.h \
 			$(INC_DIR)/Direct_Cache_set.h \
+			$(INC_DIR)/LRU_Cache_set.h \
 			$(INC_DIR)/Cache.h
 
 # Default target - builds the executable

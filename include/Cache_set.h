@@ -29,6 +29,7 @@ public:
     bool isFull();
     void incrementCapacity();
     void decrementCapacity();
+    int get_set_Size();
     virtual ~Cache_set();
     std::string virtual toString() = 0;
 

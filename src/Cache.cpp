@@ -6,6 +6,9 @@
 #include <stdexcept>
 #include <vector>
 
+#include "Direct_Cache_set.h"
+#include "LRU_Cache_set.h"
+
 using namespace std;
 using namespace Cache_utils;
 using namespace Cache_types;
@@ -42,6 +45,9 @@ void Cache::validateInput(int setSize, int numSets, int numBlocks, Cache_types::
 unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPolicy){
     if(repPolicy==Replacement_Policy::Direct){
         return make_unique<Direct_Cache_set>(setSize,repPolicy);
+    }
+    if(repPolicy==Replacement_Policy::LRU){
+        return make_unique<LRU_Cache_set>(setSize,repPolicy);
     }
     else{
         throw invalid_argument("Provided replacement policy does not exist");

@@ -28,3 +28,7 @@ void Cache_set::incrementCapacity(){
 void Cache_set::decrementCapacity(){
     capacity-=1;
 }
+
+int Cache_set::get_set_Size(){
+    return set_Size;
+}

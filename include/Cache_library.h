@@ -8,6 +8,7 @@
 
 #include "Cache_set.h"
 #include "Direct_Cache_set.h"
+#include "LRU_Cache_set.h"
 
 #include "Cache.h"
 

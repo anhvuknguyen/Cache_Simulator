@@ -2,7 +2,6 @@
 #define CACHE
 
 #include "Cache_set.h"
-#include "Direct_Cache_set.h"
 #include "Types.h"
 #include <string> 
 #include <vector>
