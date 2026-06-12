@@ -34,10 +34,11 @@ private:
 
     //Miss Classification Structures
     std::set<int> blockSet;   //For Compulsory misses
+    LRU_Cache_set *shadowCache; //For Capacity misses; every miss that is neither a compulsory miss nor a miss in the shadow cache is a conflict miss 
 
     void validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::unique_ptr<Cache_set> cacheFactory(int setSize, Cache_types::Replacement_Policy repPolicy);
-    void classifyMiss(unsigned int address);
+    void classifyMiss(unsigned int address, Miss_Type shadowMiss_T);
 public:
     Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::string viewCache();

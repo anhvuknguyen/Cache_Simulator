@@ -78,6 +78,8 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     for(int i=0;i<num_Sets;i++){
         cacheArr.push_back(cacheFactory(setSize, repPolicy));
     }
+
+    shadowCache = new LRU_Cache_set(num_Lines,Replacement_Policy::LRU);
 }
 
 //Debugging Strings
@@ -114,6 +116,15 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
     int tag = (address >> (num_OffsetBits+num_IndexBits)) & ((1<<num_TagBits)-1);
     
     if(op==Operation::Read){
+        //Handle shadowCache
+        Miss_Type shadowMiss_T = shadowCache->lookup(tag);
+        if(shadowMiss_T==Miss_Type::Miss){
+            if(shadowCache->isFull()){
+                shadowCache->evict();
+            }
+            shadowCache->insert(tag);
+        }
+        //Handle cacheArr
         Miss_Type miss_T = cacheArr[index]->lookup(tag);
         if(miss_T==Miss_Type::Hit){
             hit_Count++;
@@ -121,29 +132,29 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
         }
         else if(miss_T==Miss_Type::Miss){
             miss_Count++;
-            classifyMiss(address);
+            classifyMiss(address, shadowMiss_T);
             if(cacheArr[index]->isFull()){
                 cacheArr[index]->evict();
                 eviction_Count++;
-                cacheArr[index]->insert(tag);
             }
-            else{
-                cacheArr[index]->insert(tag);
-            }
+            cacheArr[index]->insert(tag);
         }
     }
     return -1;
 }
 
 //Classify Miss
-void Cache::classifyMiss(unsigned int address){
+void Cache::classifyMiss(unsigned int address, Miss_Type shadowMiss_T){
     int blockAddress = address >> num_OffsetBits;
     if(!blockSet.count(blockAddress)){
         blockSet.insert(blockAddress);
         compulsory_Miss_Count++;
         return;
     }
-    // ***MUST IMPLEMENT CAPACITY MISS***
+    else if(shadowMiss_T==Miss_Type::Miss){
+        capacity_Miss_Count++;
+        return;
+    }
     else{
         conflict_Miss_Count++;
         return;
