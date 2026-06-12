@@ -29,6 +29,14 @@ void Cache_set::decrementCapacity(){
     capacity-=1;
 }
 
+void Cache_set::incrementEvictions(){
+    eviction_Count+=1;
+}
+
+int Cache_set::get_Eviction_Count(){
+    return eviction_Count;
+}
+
 int Cache_set::get_set_Size(){
     return set_Size;
 }

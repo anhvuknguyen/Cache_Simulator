@@ -43,6 +43,8 @@ Miss_Type LRU_Cache_set::lookup(int tag){
 
 int LRU_Cache_set::evict(){
     if(isFull()){
+        decrementCapacity();
+        incrementEvictions();
         int tag = lineList->back().getTag();
         lineList->pop_back();
         lineMap->erase(tag);
@@ -57,6 +59,7 @@ int LRU_Cache_set::insert(int tag){
     if(lineMap->find(tag)!=lineMap->end()){
         return -1;
     }
+    incrementCapacity();
     lineList->emplace_front();
     lineList->front().setTag(tag);
     lineList->front().setValidBit(true);

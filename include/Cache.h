@@ -24,6 +24,7 @@ private:
     //Cache Stats
     int hit_Count;
     int miss_Count;
+    int eviction_Count;
     int compulsory_Miss_Count;
     int capacity_Miss_Count;
     int conflict_Miss_Count;

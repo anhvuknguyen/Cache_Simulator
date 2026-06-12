@@ -84,7 +84,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
 string Cache::viewCache(){
     string str;
     for(int i=0;i<num_Sets;i++){
-        str+= "---Set " + to_string(i) + "---\n";
+        str+= "---Set " + to_string(i) + "---  Evictions: "+to_string(cacheArr[i]->get_Eviction_Count())+"\n";
         str+= cacheArr[i]->toString();
     }
     return str;
@@ -100,6 +100,7 @@ string Cache::getStats(){
         "\n";
     str += "Cache Stats: \n\t             Hits: " + to_string(hit_Count) +
         "\n\t           Misses: " + to_string(miss_Count) +
+        "\n\t        Evictions: " + to_string(eviction_Count) +
         "\n\tCompulsory Misses: " + to_string(compulsory_Miss_Count) +
         "\n\t  Conflict Misses: " + to_string(conflict_Miss_Count) +
         "\n\t  Capacity Misses: " + to_string(capacity_Miss_Count) +
@@ -123,6 +124,7 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
             classifyMiss(address);
             if(cacheArr[index]->isFull()){
                 cacheArr[index]->evict();
+                eviction_Count++;
                 cacheArr[index]->insert(tag);
             }
             else{

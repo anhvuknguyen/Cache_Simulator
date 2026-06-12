@@ -22,6 +22,7 @@ class Cache_set{
 private:
     int set_Size;
     int capacity;
+    int eviction_Count;
     Cache_types::Replacement_Policy replacement_Policy;
 
 public:
@@ -29,6 +30,8 @@ public:
     bool isFull();
     void incrementCapacity();
     void decrementCapacity();
+    void incrementEvictions();
+    int get_Eviction_Count();
     int get_set_Size();
     virtual ~Cache_set();
     std::string virtual toString() = 0;
