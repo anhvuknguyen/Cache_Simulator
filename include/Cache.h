@@ -3,6 +3,7 @@
 
 #include "Cache_set.h"
 #include "Types.h"
+#include "LRU_Cache_set.h"
 #include <string> 
 #include <vector>
 #include <set>
@@ -38,10 +39,11 @@ private:
 
     void validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::unique_ptr<Cache_set> cacheFactory(int setSize, Cache_types::Replacement_Policy repPolicy);
-    void classifyMiss(unsigned int address, Miss_Type shadowMiss_T);
+    void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
 public:
     Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::string viewCache();
+    std::string viewShadowCache();
     std::string getStats();
     int access(Cache_types::Operation op, unsigned int address);
 };

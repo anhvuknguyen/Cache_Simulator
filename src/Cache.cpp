@@ -92,6 +92,10 @@ string Cache::viewCache(){
     return str;
 }
 
+string Cache::viewShadowCache(){
+    return shadowCache->toString();
+}
+
 string Cache::getStats(){
     string str;
     str += "Cache: \n\t             Size: " + to_string(cache_Size)  +

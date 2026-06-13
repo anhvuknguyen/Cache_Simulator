@@ -19,7 +19,7 @@ OBJ_DIR = obj
 EXECUTABLE = cacheSim
 
 # Source files (all .cpp files)
-SOURCES = 	$(TST_DIR)/test_LRUMapAccess.cpp \
+SOURCES = 	$(TST_DIR)/test_ShadowCache.cpp \
 			$(SRC_DIR)/Cache_utils.cpp \
 			$(SRC_DIR)/Cache_line.cpp \
 			$(SRC_DIR)/Cache_set.cpp \
