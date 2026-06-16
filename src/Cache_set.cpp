@@ -13,6 +13,7 @@ Cache_set::Cache_set(int setSize, Replacement_Policy repPolicy){
     set_Size = setSize;
     capacity = 0;
     replacement_Policy = repPolicy;
+    eviction_Count=0;
 }
 
 Cache_set::~Cache_set() = default;

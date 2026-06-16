@@ -37,7 +37,7 @@ public:
     std::string virtual toString() = 0;
 
     Cache_types::Miss_Type virtual lookup(int tag) = 0;
-    int virtual evict() = 0;
+    int virtual evict() = 0;                                //***MUST INCREMENT EVICTIONS***
     int virtual insert(int tag) = 0;
 };
 

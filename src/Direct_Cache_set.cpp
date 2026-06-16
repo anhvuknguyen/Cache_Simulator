@@ -33,6 +33,7 @@ Miss_Type Direct_Cache_set::lookup(int tag){
 int Direct_Cache_set::evict(){
     if(isFull()){
         line->fill(0, 0, 0);
+        incrementEvictions();
         decrementCapacity();
         return 1;
     } 
