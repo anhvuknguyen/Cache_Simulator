@@ -46,55 +46,69 @@ Cache* buildCache(){
     }
 
     do{
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Choose a mapping technique: " << endl;
         for(int i=0;i<MAPTECH_size;i++){
             cout << "[" + to_string(i) + "] " + MAPTECH_strings[i] + "\n";
         }
         cout << ">> ";
         cin >> mapTech_index;
-    }while(!(mapTech_index>-1 && mapTech_index<MAPTECH_size));
+    }while(!(mapTech_index>-1 && mapTech_index<MAPTECH_size && !cin.fail()));
     mapTech = MAPTECH[mapTech_index];
 
     do{
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Choose the number of blocks per line: ";
         cin >> numBlocks;
-    }while(numBlocks==0 || !isPowerOfTwo(numBlocks));
+    }while(numBlocks==0 || !isPowerOfTwo(numBlocks) || cin.fail());
 
     if(mapTech==Mapping_Technique::Direct){
         setSize=1;
         do{
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Choose the number of lines: ";
             cin >> numSets;
-        }while(numSets==0 || !isPowerOfTwo(numSets));
+        }while(numSets==0 || !isPowerOfTwo(numSets) || cin.fail());
         repPolicy = REPPOLICY[0];
         return new Cache(setSize, numSets, numBlocks, mapTech, repPolicy);
     }
     else if(mapTech==Mapping_Technique::Fully_Associative){
         numSets=1;
         do{
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Choose the number of lines: ";
             cin >> setSize;
-        }while(setSize==0 || isPowerOfTwo(setSize));
+        }while(setSize==0 || isPowerOfTwo(setSize) || cin.fail());
     }
     else if(mapTech==Mapping_Technique::Set_Associative){
         do{
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Choose the size of your set: ";
             cin >> setSize;
-        }while(setSize==0 || !isPowerOfTwo(setSize));
+        }while(setSize==0 || !isPowerOfTwo(setSize) || cin.fail());
         do{
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Choose the number of sets: ";
             cin >> numSets;
-        }while(numSets==0 || !isPowerOfTwo(numSets));
+        }while(numSets==0 || !isPowerOfTwo(numSets) || cin.fail());
     }
 
     do{
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Choose a replacement policy: " << endl;
         for(int i=0;i<REPPOLICY_size;i++){
             cout << "[" + to_string(i) + "] " + REPPOLICY_strings[i] + "\n";
         }
         cout << ">> ";
         cin >> repPolicy_index;
-    }while(!(repPolicy_index>-1 && repPolicy_index<REPPOLICY_size));
+    }while(!(repPolicy_index>-1 && repPolicy_index<REPPOLICY_size && !cin.fail()));
     repPolicy = REPPOLICY[repPolicy_index];
 
     return new Cache(setSize, numSets, numBlocks, mapTech, repPolicy);
@@ -103,12 +117,15 @@ Cache* buildCache(){
 void runTrace(){
     string traceFile;
     vector<string> *traceList = new vector<string>();
-    int traceSize = 0;
+    int traceSize;
     int traceIndex=-1;
     cout << "Choose file from trace directory: " << endl;
     try{
         if(fs::exists(trace_directory) && fs::is_directory(trace_directory)){
             do{
+                traceSize = 0;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 for (const auto& entry : fs::directory_iterator(trace_directory)) {
                     traceList->push_back(entry.path());
                     string str = entry.path();
@@ -119,7 +136,7 @@ void runTrace(){
                 }
                 cout << ">> ";
                 cin >> traceIndex;
-            }while(!(traceIndex>-1 && traceIndex<traceSize));
+            }while(!(traceIndex>-1 && traceIndex<traceSize && !cin.fail()));
         }
     }
     catch(const fs::filesystem_error& e){
