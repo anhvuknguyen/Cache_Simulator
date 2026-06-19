@@ -82,7 +82,7 @@ Cache* buildCache(){
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Choose the number of lines: ";
             cin >> setSize;
-        }while(setSize==0 || isPowerOfTwo(setSize) || cin.fail());
+        }while(setSize==0 || !isPowerOfTwo(setSize) || cin.fail());
     }
     else if(mapTech==Mapping_Technique::Set_Associative){
         do{
