@@ -39,21 +39,14 @@ string trace_directory = "./traces";
 Cache* buildCache(){
     int mapTech_index = -1;
     int repPolicy_index = -1;
-    do{
-        cout << "Choose the size of your set: ";
-        cin >> setSize;
-    }while(setSize==0 || !isPowerOfTwo(setSize));
-    do{
-        cout << "  Choose the number of sets: ";
-        cin >> numSets;
-    }while(numSets==0 || !isPowerOfTwo(numSets));
-    do{
-        cout << "Choose the number of blocks: ";
-        cin >> numBlocks;
-    }while(numBlocks==0 || !isPowerOfTwo(numBlocks));
+
+    if(cache!=NULL){
+        cout << "\nMust clear existing cachse first!\n" << endl;
+        return cache;
+    }
 
     do{
-        cout << " Choose a mapping technique: " << endl;
+        cout << "Choose a mapping technique: " << endl;
         for(int i=0;i<MAPTECH_size;i++){
             cout << "[" + to_string(i) + "] " + MAPTECH_strings[i] + "\n";
         }
@@ -61,7 +54,39 @@ Cache* buildCache(){
         cin >> mapTech_index;
     }while(!(mapTech_index>-1 && mapTech_index<MAPTECH_size));
     mapTech = MAPTECH[mapTech_index];
-    
+
+    do{
+        cout << "Choose the number of blocks per line: ";
+        cin >> numBlocks;
+    }while(numBlocks==0 || !isPowerOfTwo(numBlocks));
+
+    if(mapTech==Mapping_Technique::Direct){
+        setSize=1;
+        do{
+            cout << "Choose the number of lines: ";
+            cin >> numSets;
+        }while(numSets==0 || !isPowerOfTwo(numSets));
+        repPolicy = REPPOLICY[0];
+        return new Cache(setSize, numSets, numBlocks, mapTech, repPolicy);
+    }
+    else if(mapTech==Mapping_Technique::Fully_Associative){
+        numSets=1;
+        do{
+            cout << "Choose the number of lines: ";
+            cin >> setSize;
+        }while(setSize==0 || isPowerOfTwo(setSize));
+    }
+    else if(mapTech==Mapping_Technique::Set_Associative){
+        do{
+            cout << "Choose the size of your set: ";
+            cin >> setSize;
+        }while(setSize==0 || !isPowerOfTwo(setSize));
+        do{
+            cout << "Choose the number of sets: ";
+            cin >> numSets;
+        }while(numSets==0 || !isPowerOfTwo(numSets));
+    }
+
     do{
         cout << "Choose a replacement policy: " << endl;
         for(int i=0;i<REPPOLICY_size;i++){
@@ -164,7 +189,7 @@ int main() {
             cout << "Quitting" << endl;
         }
         else{
-            cout << "Invalid Option" << endl;
+            cout << "\nInvalid Option\n" << endl;
         }
         
     }

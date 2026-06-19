@@ -1,4 +1,5 @@
 #include "Cache_utils.h"
+#include <string>
 
 //Checks if number is a power of 2
 //(10000 & 01111 = 0); Property of all powers of 2
