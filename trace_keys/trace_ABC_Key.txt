@@ -5,12 +5,12 @@ Config A: numSets=2, setSize=2, blockSize=4
 A1: Compulsory: 2, Conflict: 0, Capacity: 0, Hits: 4
 A2: Compulsory: 3, Conflict: 4, Capacity: 0, Hits: 0
 A3: Compulsory: 4, Conflict: 0, Capacity: 0, Hits: 4
-A4: Compulsory: 6, Conflict: 1, Capacity: 1, Hits: 0                //Wrong
+A4: Compulsory: 6, Conflict: 1, Capacity: 2, Hits: 0
 
 Config B: numSets=4, setSize=2, blockSize=8
 B1: Compulsory: 5, Conflict: 0, Capacity: 0, Hits: 0
-B2: Compulsory: 9, Conflict: 1, Capacity: 1, Hits: 0                //Wrong
+B2: Compulsory: 9, Conflict: 3, Capacity: 0, Hits: 1
 
 Config C: numSets=1, setSize=4, blockSize=4 (fully associative)
 C1: Compulsory: 6, Conflict: 0, Capacity: 1, Hits: 0
-C2: Compulsory: 6, Conflict: 0, Capacity: 1, Hits: 2                //Wrong
+C2: Compulsory: 6, Conflict: 0, Capacity: 0, Hits: 3
