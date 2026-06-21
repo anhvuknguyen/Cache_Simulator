@@ -166,6 +166,15 @@ void clearCache(){
     cache=NULL;
 }
 
+void viewCache(){
+    cout << cache->getStats() << endl;
+    cout << cache->viewCache() << endl;
+}
+
+void resetCache(){
+    cache->reset();
+}
+
 int main() {
     bool active = true;
     
@@ -174,6 +183,8 @@ int main() {
         cout << "[b] Build Cache" << endl;
         cout << "[t] Trace File" << endl;
         cout << "[c] Clear Cache" << endl;
+        cout << "[v] View Cache" << endl;
+        cout << "[r] Reset Cache" << endl;
         cout << "[q] Quit" << endl;
 
         string choice;
@@ -204,6 +215,24 @@ int main() {
         else if(choice=="q"){
             active=false;
             cout << "Quitting" << endl;
+        }
+        else if(choice=="v"){
+            if(cache==NULL){
+                cout << "\nCache has not been built!\n" << endl;
+                continue;
+            }
+            else{
+                viewCache();
+            }
+        }
+        else if(choice=="r"){
+            if(cache==NULL){
+                cout << "\nCache has not been built!\n" << endl;
+                continue;
+            }
+            else{
+                resetCache();
+            }
         }
         else{
             cout << "\nInvalid Option\n" << endl;

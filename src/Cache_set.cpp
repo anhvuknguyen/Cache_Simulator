@@ -41,3 +41,8 @@ int Cache_set::get_Eviction_Count(){
 int Cache_set::get_set_Size(){
     return set_Size;
 }
+
+void Cache_set::reset(){
+    eviction_Count=0;
+    capacity=0;
+}

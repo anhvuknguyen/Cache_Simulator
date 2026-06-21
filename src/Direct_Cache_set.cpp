@@ -52,3 +52,8 @@ int Direct_Cache_set::insert(int tag){
         return -1;
     }
 }
+
+void Direct_Cache_set::reset(){
+    Cache_set::reset();
+    line->fill(0,false,false);
+}

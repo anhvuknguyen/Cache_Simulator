@@ -66,3 +66,9 @@ int LRU_Cache_set::insert(int tag){
     lineMap->insert({tag,lineList->begin()});
     return 1;
 }
+
+void LRU_Cache_set::reset(){
+    Cache_set::reset();
+    lineList->clear();
+    lineMap->clear();
+}

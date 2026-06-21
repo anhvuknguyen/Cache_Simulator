@@ -67,6 +67,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     num_Lines = setSize * numSets;
     num_Sets = numSets;
     num_Blocks = numBlocks;
+    eviction_Count = 0;
 
     num_OffsetBits = log2(numBlocks);
     num_IndexBits = log2(numSets);
@@ -163,4 +164,18 @@ void Cache::classifyMiss(unsigned int address, Miss_Type shadowMiss_T){
         conflict_Miss_Count++;
         return;
     }
+}
+
+void Cache::reset(){
+    for(int i=0;i<num_Sets;i++){
+        cacheArr[i]->reset();
+    }
+    hit_Count=0;
+    miss_Count=0;
+    eviction_Count=0;
+    compulsory_Miss_Count=0;
+    capacity_Miss_Count=0;
+    conflict_Miss_Count=0;
+
+    shadowCache->reset();
 }

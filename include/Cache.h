@@ -46,6 +46,7 @@ public:
     std::string viewShadowCache();
     std::string getStats();
     int access(Cache_types::Operation op, unsigned int address);
+    void reset();
 };
 
 #endif

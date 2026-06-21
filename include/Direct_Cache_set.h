@@ -16,6 +16,7 @@ public:
     Cache_types::Miss_Type lookup(int tag) override;
     int evict() override;
     int insert(int tag) override;
+    void reset() override;
 };
 
 #endif
