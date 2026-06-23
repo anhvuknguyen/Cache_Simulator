@@ -1,8 +1,0 @@
-When creating a new class:
-Update Cache_library.h include
-Update Cache.cpp include
-Update Cache.cpp cacheFactory
-Update MakeFile
-Update main.cpp REPPOLICY
-Update main.cpp REPPOLICY_strings
-Update main.cpp REPPOLICY_size

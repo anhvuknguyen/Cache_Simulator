@@ -181,10 +181,10 @@ int main() {
     while(active){
         cout << "What would you like to do?" << endl;
         cout << "[b] Build Cache" << endl;
-        cout << "[t] Trace File" << endl;
-        cout << "[c] Clear Cache" << endl;
         cout << "[v] View Cache" << endl;
+        cout << "[t] Trace File" << endl;
         cout << "[r] Reset Cache" << endl;
+        cout << "[d] Delete Cache" << endl;
         cout << "[q] Quit" << endl;
 
         string choice;
@@ -203,7 +203,7 @@ int main() {
                 runTrace();
             }
         }
-        else if(choice=="c"){
+        else if(choice=="d"){
             if(cache==NULL){
                 cout << "\nCache has not been built!\n" << endl;
                 continue;
