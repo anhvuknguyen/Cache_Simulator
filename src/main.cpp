@@ -21,9 +21,9 @@ string MAPTECH_strings[] = {"Direct","Fully Associative","Set Associative"};
 int MAPTECH_size = 3;
 
 //Replacement Policy List
-Replacement_Policy REPPOLICY[] = {Replacement_Policy::Direct,Replacement_Policy::LRU};
-string REPPOLICY_strings[] = {"Direct", "LRU"};
-int REPPOLICY_size = 2;
+Replacement_Policy REPPOLICY[] = {Replacement_Policy::Direct,Replacement_Policy::FIFO,Replacement_Policy::LRU};
+string REPPOLICY_strings[] = {"Direct", "FIFO", "LRU"};
+int REPPOLICY_size = 3;
 
 //Cache Stats
 int setSize = 0;
@@ -34,7 +34,7 @@ Replacement_Policy repPolicy;
 Cache *cache = NULL;
 
 //Trace Directory
-string trace_directory = "./traces";
+string trace_directory = "./traces/FIFO_traces";
 
 Cache* buildCache(){
     int mapTech_index = -1;

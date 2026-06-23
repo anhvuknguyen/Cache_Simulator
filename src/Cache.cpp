@@ -8,6 +8,7 @@
 
 #include "Direct_Cache_set.h"
 #include "LRU_Cache_set.h"
+#include "FIFO_Cache_set.h"
 
 using namespace std;
 using namespace Cache_utils;
@@ -46,8 +47,11 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
     if(repPolicy==Replacement_Policy::Direct){
         return make_unique<Direct_Cache_set>(setSize,repPolicy);
     }
-    if(repPolicy==Replacement_Policy::LRU){
+    else if(repPolicy==Replacement_Policy::LRU){
         return make_unique<LRU_Cache_set>(setSize,repPolicy);
+    }
+    else if(repPolicy==Replacement_Policy::FIFO){
+        return make_unique<FIFO_Cache_set>(setSize,repPolicy);
     }
     else{
         throw invalid_argument("Provided replacement policy does not exist");
@@ -177,5 +181,6 @@ void Cache::reset(){
     capacity_Miss_Count=0;
     conflict_Miss_Count=0;
 
+    blockSet.clear();
     shadowCache->reset();
 }
