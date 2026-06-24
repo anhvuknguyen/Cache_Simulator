@@ -8,10 +8,10 @@ A3: Compulsory: 6, Conflict: 0, Capacity: 1, Hits: 0
 
 Config B: numSets=4, setSize=2, blockSize=8
 B1: Compulsory: 8, Conflict: 0, Capacity: 0, Hits: 0
-B2: Compulsory: 4, Conflict: 2, Capacity: 0, Hits: 1
-B3: Compulsory: 6, Conflict: 0, Capacity: 3, Hits: 0
+B2: Compulsory: 4, Conflict: 3, Capacity: 0, Hits: 0
+B3: Compulsory: 6, Conflict: 3, Capacity: 0, Hits: 0
 
 Config C: numSets=1, setSize=4, blockSize=8
 C1: Compulsory: 5, Conflict: 0, Capacity: 2, Hits: 0
-C2: Compulsory: 5, Conflict: 0, Capacity: 1, Hits: 1
-C3: Compulsory: 5, Conflict: 0, Capacity: 4, Hits: 1
+C2: Compulsory: 5, Conflict: 1, Capacity: 0, Hits: 1
+C3: Compulsory: 5, Conflict: 2, Capacity: 1, Hits: 2
