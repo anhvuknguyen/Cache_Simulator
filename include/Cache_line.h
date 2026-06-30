@@ -16,6 +16,7 @@ private:
     bool dirtyBit;
 public:
     Cache_line();
+    Cache_line(int t, bool valid, bool dirty);
     void fill(int t, bool valid, bool dirty);
     void setTag(int t);
     void setValidBit(bool valid);

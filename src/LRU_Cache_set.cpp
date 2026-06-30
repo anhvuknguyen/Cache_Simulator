@@ -60,9 +60,7 @@ int LRU_Cache_set::insert(int tag){
         return -1;
     }
     incrementCapacity();
-    lineList->emplace_front();
-    lineList->front().setTag(tag);
-    lineList->front().setValidBit(true);
+    lineList->emplace_front(tag,true,false);
     lineMap->insert({tag,lineList->begin()});
     return 1;
 }
