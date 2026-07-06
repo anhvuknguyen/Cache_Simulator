@@ -26,6 +26,7 @@ std::string Random_Cache_set::toString(){
 }
 
 Cache_types::Miss_Type Random_Cache_set::lookup(int tag){
+    if(lineArr->empty())return Miss_Type::Miss;
     for(int i=0;i<get_set_Size();i++){
         if(lineArr->at(i).getTag() == tag){
             return Miss_Type::Hit;
@@ -48,7 +49,7 @@ int Random_Cache_set::evict(){
 }
 
 int Random_Cache_set::insert(int tag){
-    if(lookup(tag)==Miss_Type::Hit){
+    if(lookup(tag)==Miss_Type::Hit){ ////ISSUE
         return -1;
     }
     incrementCapacity();

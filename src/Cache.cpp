@@ -9,6 +9,7 @@
 #include "Direct_Cache_set.h"
 #include "LRU_Cache_set.h"
 #include "FIFO_Cache_set.h"
+#include "Random_Cache_set.h"
 
 using namespace std;
 using namespace Cache_utils;
@@ -52,6 +53,9 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
     }
     else if(repPolicy==Replacement_Policy::FIFO){
         return make_unique<FIFO_Cache_set>(setSize,repPolicy);
+    }
+    else if(repPolicy==Replacement_Policy::Random){
+        return make_unique<Random_Cache_set>(setSize,repPolicy);
     }
     else{
         throw invalid_argument("Provided replacement policy does not exist");
