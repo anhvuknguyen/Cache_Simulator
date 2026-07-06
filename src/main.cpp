@@ -34,7 +34,7 @@ Replacement_Policy repPolicy;
 Cache *cache = NULL;
 
 //Trace Directory
-string trace_directory = "./traces/FIFO_traces";
+string trace_directory = "./traces";
 
 Cache* buildCache(){
     int mapTech_index = -1;
@@ -115,11 +115,14 @@ Cache* buildCache(){
 }
 
 void runTrace(){
+    string traceType_dir;
     string traceFile;
     vector<string> *traceList = new vector<string>();
     int traceSize;
     int traceIndex=-1;
-    cout << "Choose file from trace directory: " << endl;
+
+    //Choose Trace Type
+    cout << "Choose type of trace: " << endl;
     try{
         if(fs::exists(trace_directory) && fs::is_directory(trace_directory)){
             do{
@@ -127,6 +130,35 @@ void runTrace(){
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 for (const auto& entry : fs::directory_iterator(trace_directory)) {
+                    traceList->push_back(entry.path());
+                    string str = entry.path();
+                    size_t substring_index = str.rfind("/");
+                    str = str.substr(substring_index+1);
+                    cout << "[" << to_string(traceSize) << "] " << str << endl;
+                    traceSize++;
+                }
+                cout << ">> ";
+                cin >> traceIndex;
+            }while(!(traceIndex>-1 && traceIndex<traceSize && !cin.fail()));
+        }
+    }
+    catch(const fs::filesystem_error& e){
+        cerr << "Error: " << e.what() << endl;
+    }
+    traceType_dir = traceList->at(traceIndex);
+
+    //Choose Trace Directory
+    delete traceList;
+    traceIndex=-1;
+    traceList = new vector<string>();
+    cout << "Choose file from trace directory: " << endl;
+    try{
+        if(fs::exists(traceType_dir) && fs::is_directory(traceType_dir)){
+            do{
+                traceSize = 0;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                for (const auto& entry : fs::directory_iterator(traceType_dir)) {
                     traceList->push_back(entry.path());
                     string str = entry.path();
                     size_t substring_index = str.rfind("/");

@@ -19,15 +19,15 @@ Random_Cache_set::~Random_Cache_set(){
 
 std::string Random_Cache_set::toString(){
     string str;
-    for(int i=0;i<get_set_Size();i++){
-        str+=lineArr->at(i).toString();
+    for(int i=0;i<((int)lineArr->size());i++){
+        str+=lineArr->at(i).toString()+="\n";
     }
     return str;
 }
 
 Cache_types::Miss_Type Random_Cache_set::lookup(int tag){
     if(lineArr->empty())return Miss_Type::Miss;
-    for(int i=0;i<get_set_Size();i++){
+    for(int i=0;i<((int)lineArr->size());i++){
         if(lineArr->at(i).getTag() == tag){
             return Miss_Type::Hit;
         }
