@@ -1,0 +1,15 @@
+Mapping: Set Associative
+Replacement Policy: LIFO
+
+Config A: numSets=2, setSize=2, blockSize=4
+A1: Compulsory: 3, Conflict: 3, Capacity: 0, Hits: 0
+A2: Compulsory: 4, Conflict: 3, Capacity: 0, Hits: 0
+A3: Compulsory: 6, Conflict: 0, Capacity: 0, Hits: 1
+
+Config B: numSets=4, setSize=2, blockSize=8
+B1: Compulsory: 3, Conflict: 4, Capacity: 0, Hits: 0
+B2: Compulsory: 4, Conflict: 0, Capacity: 0, Hits: 4
+
+Config C: numSets=1, setSize=4, blockSize=8 (fully associative)
+C1: Compulsory: 5, Conflict: 0, Capacity: 3, Hits: 0
+C2: Compulsory: 5, Conflict: 0, Capacity: 3, Hits: 1

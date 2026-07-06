@@ -1,39 +1,39 @@
-#include "FIFO_Cache_set.h"
+#include "LIFO_Cache_set.h"
 #include "Types.h"
 #include <cstdlib>
 #include <string> 
 #include <stdexcept>
 #include <memory>
-#include <queue>
+#include <stack>
 #include <unordered_map>
 
 using namespace std;
 using namespace Cache_types;
 
-FIFO_Cache_set::FIFO_Cache_set(int setSize, Cache_types::Replacement_Policy repPolicy) : Cache_set(setSize,repPolicy){
-    lineQueue = new queue<Cache_line>();
+LIFO_Cache_set::LIFO_Cache_set(int setSize, Replacement_Policy repPolicy) : Cache_set(setSize,repPolicy){
+    lineStack = new stack<Cache_line>();
     lineMap = new unordered_map<int,Cache_line>();
 }
 
-FIFO_Cache_set::~FIFO_Cache_set(){
-    delete lineQueue;
+LIFO_Cache_set::~LIFO_Cache_set(){
+    delete lineStack;
     delete lineMap;
 }
 
-std::string FIFO_Cache_set::toString(){
-    return toString_Tool(*lineQueue);
+string LIFO_Cache_set::toString(){
+    return toString_Tool(*lineStack);
 }
 
-std::string FIFO_Cache_set::toString_Tool(std::queue<Cache_line> copy){
+string LIFO_Cache_set::toString_Tool(std::stack<Cache_line> copy){
     string str;
     while(!copy.empty()){
-        str+=copy.front().toString() + "\n";
+        str+=copy.top().toString() + "\n";
         copy.pop();
     }
     return str;
 }
 
-Miss_Type FIFO_Cache_set::lookup(int tag){
+Miss_Type LIFO_Cache_set::lookup(int tag){
     auto targetIt = lineMap->find(tag);
     if(targetIt==lineMap->end()){
         return Miss_Type::Miss;
@@ -43,12 +43,12 @@ Miss_Type FIFO_Cache_set::lookup(int tag){
     }
 }
 
-int FIFO_Cache_set::evict(){
+int LIFO_Cache_set::evict(){
     if(isFull()){
         decrementCapacity();
         incrementEvictions();
-        int tag = lineQueue->front().getTag();
-        lineQueue->pop();
+        int tag = lineStack->top().getTag();
+        lineStack->pop();
         lineMap->erase(tag);
         return 1;
     }
@@ -57,20 +57,20 @@ int FIFO_Cache_set::evict(){
     }
 }
 
-int FIFO_Cache_set::insert(int tag){
+int LIFO_Cache_set::insert(int tag){
     if(lineMap->find(tag)!=lineMap->end()){
         return -1;
     }
     incrementCapacity();
-    lineQueue->emplace(tag, true, false);
-    lineMap->insert({tag,lineQueue->back()});
+    lineStack->emplace(tag,true,false);
+    lineMap->insert({tag,lineStack->top()});
     return 1;
 }
 
-void FIFO_Cache_set::reset(){
+void LIFO_Cache_set::reset(){
     Cache_set::reset();
-    while(!lineQueue->empty()){
-        lineQueue->pop();
+    while(!lineStack->empty()){
+        lineStack->pop();
     }
     lineMap->clear();
 }
