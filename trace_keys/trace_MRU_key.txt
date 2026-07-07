@@ -1,0 +1,12 @@
+Mapping: Set Associative
+Replacement Policy: MRU
+
+Config A: numSets=2, setSize=2, blockSize=4
+A1: Compulsory: 3, Conflict: 1, Capacity: 0, Hits: 1
+A2: Compulsory: 4, Conflict: 1, Capacity: 0, Hits: 1
+
+Config B: numSets=1, setSize=4, blockSize=8 (fully associative)
+B1: Compulsory: 5, Conflict: 0, Capacity: 1, Hits: 1
+
+Config C: numSets=4, setSize=2, blockSize=4
+C1: Compulsory: 3, Conflict: 2, Capacity: 0, Hits: 1

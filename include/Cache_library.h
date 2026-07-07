@@ -9,6 +9,7 @@
 #include "Cache_set.h"
 #include "Direct_Cache_set.h"
 #include "LRU_Cache_set.h"
+#include "MRU_Cache_set.h"
 #include "FIFO_Cache_set.h"
 #include "LIFO_Cache_set.h"
 #include "Random_Cache_set.h"

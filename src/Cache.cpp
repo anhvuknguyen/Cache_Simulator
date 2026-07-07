@@ -8,6 +8,7 @@
 
 #include "Direct_Cache_set.h"
 #include "LRU_Cache_set.h"
+#include "MRU_Cache_set.h"
 #include "FIFO_Cache_set.h"
 #include "LIFO_Cache_set.h"
 #include "Random_Cache_set.h"
@@ -51,6 +52,9 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
     }
     else if(repPolicy==Replacement_Policy::LRU){
         return make_unique<LRU_Cache_set>(setSize,repPolicy);
+    }
+    else if(repPolicy==Replacement_Policy::MRU){
+        return make_unique<MRU_Cache_set>(setSize,repPolicy);
     }
     else if(repPolicy==Replacement_Policy::FIFO){
         return make_unique<FIFO_Cache_set>(setSize,repPolicy);

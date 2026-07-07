@@ -25,6 +25,7 @@ SOURCES = 	$(TST_DIR)/main.cpp \
 			$(SRC_DIR)/Cache_set.cpp \
 			$(SRC_DIR)/Direct_Cache_set.cpp \
 			$(SRC_DIR)/LRU_Cache_set.cpp \
+			$(SRC_DIR)/MRU_Cache_set.cpp \
 			$(SRC_DIR)/FIFO_Cache_set.cpp \
 			$(SRC_DIR)/LIFO_Cache_set.cpp \
 			$(SRC_DIR)/Random_Cache_set.cpp \
@@ -41,6 +42,7 @@ HEADERS = 	$(INC_DIR)/Cache_library.h \
 			$(INC_DIR)/Cache_set.h \
 			$(INC_DIR)/Direct_Cache_set.h \
 			$(INC_DIR)/LRU_Cache_set.h \
+			$(INC_DIR)/MRU_Cache_set.h \
 			$(INC_DIR)/FIFO_Cache_set.h \
 			$(INC_DIR)/LIFO_Cache_set.h \
 			$(INC_DIR)/Random_Cache_set.h \
