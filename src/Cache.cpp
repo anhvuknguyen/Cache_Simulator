@@ -5,6 +5,7 @@
 #include <string> 
 #include <stdexcept>
 #include <vector>
+#include <iostream>
 
 #include "Direct_Cache_set.h"
 #include "LRU_Cache_set.h"
@@ -12,6 +13,7 @@
 #include "FIFO_Cache_set.h"
 #include "LIFO_Cache_set.h"
 #include "Random_Cache_set.h"
+#include "LFU_Cache_set.h"
 
 using namespace std;
 using namespace Cache_utils;
@@ -64,6 +66,9 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
     }
     else if(repPolicy==Replacement_Policy::Random){
         return make_unique<Random_Cache_set>(setSize,repPolicy);
+    }
+    else if(repPolicy==Replacement_Policy::LFU){
+        return make_unique<LFU_Cache_set>(setSize,repPolicy);
     }
     else{
         throw invalid_argument("Provided replacement policy does not exist");
@@ -148,6 +153,7 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
         //Handle cacheArr
         Miss_Type miss_T = cacheArr[index]->lookup(tag);
         if(miss_T==Miss_Type::Hit){
+            cout << "Hit" << endl;
             hit_Count++;
             return 1;
         }
@@ -169,18 +175,22 @@ void Cache::classifyMiss(unsigned int address, Miss_Type shadowMiss_T){
     int blockAddress = address >> num_OffsetBits;
     if(!blockSet.count(blockAddress)){
         blockSet.insert(blockAddress);
+        cout << "Compulsory Miss" << endl;
         compulsory_Miss_Count++;
         return;
     }
     else if(shadowMiss_T==Miss_Type::Miss){
+        cout << "Capacity Miss" << endl;
         capacity_Miss_Count++;
         return;
     }
     else{
         if(num_Sets==1){
+            cout << "Capacity Miss" << endl;
             capacity_Miss_Count++;
             return;
         }
+        cout << "Conflict Miss" << endl;
         conflict_Miss_Count++;
         return;
     }

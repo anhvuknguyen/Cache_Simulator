@@ -13,6 +13,7 @@
 #include "FIFO_Cache_set.h"
 #include "LIFO_Cache_set.h"
 #include "Random_Cache_set.h"
+#include "LFU_Cache_set.h"
 
 #include "Cache.h"
 

@@ -21,9 +21,9 @@ string MAPTECH_strings[] = {"Direct","Fully Associative","Set Associative"};
 int MAPTECH_size = 3;
 
 //Replacement Policy List
-Replacement_Policy REPPOLICY[] = {Replacement_Policy::Direct,Replacement_Policy::Random,Replacement_Policy::FIFO,Replacement_Policy::LIFO,Replacement_Policy::LRU,Replacement_Policy::MRU};
-string REPPOLICY_strings[] = {"Direct", "Random", "FIFO", "LIFO", "LRU", "MRU"};
-int REPPOLICY_size = 6;
+Replacement_Policy REPPOLICY[] = {Replacement_Policy::Direct,Replacement_Policy::Random,Replacement_Policy::FIFO,Replacement_Policy::LIFO,Replacement_Policy::LRU,Replacement_Policy::MRU,Replacement_Policy::LFU};
+string REPPOLICY_strings[] = {"Direct", "Random", "FIFO", "LIFO", "LRU", "MRU", "LFU"};
+int REPPOLICY_size = 7;
 
 //Cache Stats
 int setSize = 0;

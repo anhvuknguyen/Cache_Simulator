@@ -1,0 +1,18 @@
+Mapping: Set Associative / Fully Associative (per config)
+Replacement Policy: LFU (LRU tiebreak, frequency resets on eviction)
+
+Config A: numSets=1, setSize=4, blockSize=8 (fully associative)
+A1: Compulsory: 5, Conflict: 0, Capacity: 1, Hits: 0
+A2: Compulsory: 5, Conflict: 0, Capacity: 0, Hits: 2
+A3: Compulsory: 6, Conflict: 0, Capacity: 2, Hits: 2
+A4: Compulsory: 5, Conflict: 0, Capacity: 1, Hits: 1
+A5: Compulsory: 6, Conflict: 0, Capacity: 2, Hits: 2
+A6: Compulsory: 7, Conflict: 0, Capacity: 0, Hits: 3
+
+Config B: numSets=2, setSize=2, blockSize=4
+B7: Compulsory: 3, Conflict: 1, Capacity: 0, Hits: 1
+B8: Compulsory: 3, Conflict: 2, Capacity: 0, Hits: 2
+B9: Compulsory: 5, Conflict: 0, Capacity: 1, Hits: 0
+B10: Compulsory: 6, Conflict: 0, Capacity: 2, Hits: 0
+
+(Trace numbering maps 1–6 → A1–A6 and 7–10 → B7–B10 from my previous message.)
