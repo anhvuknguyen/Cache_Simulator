@@ -143,12 +143,13 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
     
     if(op==Operation::Read){
         //Handle shadowCache
-        Miss_Type shadowMiss_T = shadowCache->lookup(tag);
+        int blockNumber = address >> num_OffsetBits;
+        Miss_Type shadowMiss_T = shadowCache->lookup(blockNumber);
         if(shadowMiss_T==Miss_Type::Miss){
             if(shadowCache->isFull()){
                 shadowCache->evict();
             }
-            shadowCache->insert(tag);
+            shadowCache->insert(blockNumber);
         }
         //Handle cacheArr
         Miss_Type miss_T = cacheArr[index]->lookup(tag);
