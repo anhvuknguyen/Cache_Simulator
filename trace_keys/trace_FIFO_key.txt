@@ -13,5 +13,5 @@ B3: Compulsory: 6, Conflict: 3, Capacity: 0, Hits: 0
 
 Config C: numSets=1, setSize=4, blockSize=8
 C1: Compulsory: 5, Conflict: 0, Capacity: 2, Hits: 0
-C2: Compulsory: 5, Conflict: 1, Capacity: 0, Hits: 1
-C3: Compulsory: 5, Conflict: 2, Capacity: 1, Hits: 2
+C2: Compulsory: 5, Conflict: 0, Capacity: 1, Hits: 1
+C3: Compulsory: 5, Conflict: 0, Capacity: 3, Hits: 2
