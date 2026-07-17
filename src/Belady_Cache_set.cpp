@@ -35,21 +35,13 @@ string Belady_Cache_set::toString() {
     return str;
 }
 
-int Belady_Cache_set::loadTrace(string traceFile){
-    ifstream file(traceFile);
-    if (!file.is_open()) {
-        return -1;
-    }
-    string operation;
-    unsigned int address;
-    while (file.good()) {
-        file >> operation >> std::hex >> address;
-        Operation op = (operation=="R")? Operation::Read : Operation::Write;
-    }
+void Belady_Cache_set::addFutureTag(Cache_types::Operation op, int tag){
+    traceList->emplace_back(op,tag);
 }
 
 Miss_Type Belady_Cache_set::lookup(int tag){
     auto targetIt = lineMap->find(tag);
+    traceList->erase(traceList->begin());
     if(targetIt==lineMap->end()){
         return Miss_Type::Miss;
     }
@@ -57,5 +49,24 @@ Miss_Type Belady_Cache_set::lookup(int tag){
         lineList->splice(lineList->begin(),*lineList,targetIt->second);
         (*lineMap)[tag] = lineList->begin();
         return Miss_Type::Hit;
+    }
+}
+
+void Belady_Cache_set::evictionHelper(list<Cache_line> lineListCopy, vector<int> &inCache){
+    list<Cache_line>::iterator it = lineListCopy.begin();
+    while(it!=lineListCopy.end()){
+        inCache.push_back(it->getTag());
+    }
+}
+
+int Belady_Cache_set::evict(){
+    if(isFull()){
+        vector<int> inCache;
+        evictionHelper(*lineList,inCache);
+        //until inCache has only 1 element or the end of the traceList is reached
+        return 1;
+    }
+    else{
+        return -1;
     }
 }

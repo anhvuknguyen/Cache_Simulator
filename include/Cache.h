@@ -45,6 +45,8 @@ public:
     std::string viewCache();
     std::string viewShadowCache();
     std::string getStats();
+    void decompose(unsigned int address, int& offset, int& index, int& tag);
+    int belady_loadFile(std::string traceFile);
     int access(Cache_types::Operation op, unsigned int address);
     void reset();
 };

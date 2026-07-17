@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <string> 
 #include <stdexcept>
+#include <filesystem>
+#include <fstream>
 #include <vector>
 #include <iostream>
 
@@ -14,6 +16,7 @@
 #include "LIFO_Cache_set.h"
 #include "Random_Cache_set.h"
 #include "LFU_Cache_set.h"
+#include "Belady_Cache_set.h"
 
 using namespace std;
 using namespace Cache_utils;
@@ -69,6 +72,9 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
     }
     else if(repPolicy==Replacement_Policy::LFU){
         return make_unique<LFU_Cache_set>(setSize,repPolicy);
+    }
+    else if(repPolicy==Replacement_Policy::Belady){
+        return make_unique<Belady_Cache_set>(setSize,repPolicy);
     }
     else{
         throw invalid_argument("Provided replacement policy does not exist");
@@ -136,10 +142,34 @@ string Cache::getStats(){
     return str;
 }
 
+void Cache::decompose(unsigned int address, int &offset, int &index, int &tag){
+    offset = address & ((1<<num_OffsetBits)-1);
+    index = (address >> num_OffsetBits) & ((1<<num_IndexBits)-1);
+    tag = (address >> (num_OffsetBits+num_IndexBits)) & ((1<<num_TagBits)-1);
+}
+
+int Cache::belady_loadFile(string traceFile){
+    if(replacement_Policy!=Replacement_Policy::Belady){
+        return -1;
+    }
+    ifstream file(traceFile);
+    if (!file.is_open()) {
+        return -1;
+    }
+    string operation;
+    unsigned int address;
+    while (file.good()) {
+        file >> operation >> std::hex >> address;
+        Operation op = (operation=="R")? Operation::Read : Operation::Write;
+        int offset, index, tag;
+        decompose(address, offset,index,tag);
+        cacheArr[index]->addFutureTag(op,tag);
+    }
+}
+
 int Cache::access(Cache_types::Operation op, unsigned int address){
-    int offset = address & ((1<<num_OffsetBits)-1);
-    int index = (address >> num_OffsetBits) & ((1<<num_IndexBits)-1);
-    int tag = (address >> (num_OffsetBits+num_IndexBits)) & ((1<<num_TagBits)-1);
+    int offset, index, tag;
+    decompose(address, offset,index,tag);
     
     if(op==Operation::Read){
         //Handle shadowCache

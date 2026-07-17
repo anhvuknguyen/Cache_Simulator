@@ -13,12 +13,13 @@ private:
     std::list<Cache_line> *lineList;
     std::unordered_map<int,std::list<Cache_line>::iterator> *lineMap;
     std::vector<pair<Cache_types::Operation,int>> *traceList;
+    void evictionHelper(std::list<Cache_line> lineListCopy, std::vector<int>& inCache);
 public:
     Belady_Cache_set(int setSize,Cache_types::Replacement_Policy repPolicy);
     ~Belady_Cache_set() override;
     std::string toString() override;
 
-    int loadTrace(std::string traceFile);
+    void addFutureTag(Cache_types::Operation op, int tag) override;
     Cache_types::Miss_Type lookup(int tag) override;
     int evict() override;
     int insert(int tag) override;
