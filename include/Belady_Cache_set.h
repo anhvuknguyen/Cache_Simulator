@@ -13,7 +13,6 @@ private:
     std::list<Cache_line> *lineList;
     std::unordered_map<int,std::list<Cache_line>::iterator> *lineMap;
     std::vector<pair<Cache_types::Operation,int>> *traceList;
-    void evictionHelper(std::list<Cache_line> lineListCopy, std::vector<int>& inCache);
 public:
     Belady_Cache_set(int setSize,Cache_types::Replacement_Policy repPolicy);
     ~Belady_Cache_set() override;

@@ -52,17 +52,12 @@ Miss_Type Belady_Cache_set::lookup(int tag){
     }
 }
 
-void Belady_Cache_set::evictionHelper(list<Cache_line> lineListCopy, vector<int> &inCache){
-    list<Cache_line>::iterator it = lineListCopy.begin();
-    while(it!=lineListCopy.end()){
-        inCache.push_back(it->getTag());
-    }
-}
-
 int Belady_Cache_set::evict(){
     if(isFull()){
         vector<int> inCache;
-        evictionHelper(*lineList,inCache);
+        for (Cache_line& line : *lineList) {
+            inCache.push_back(line.getTag());
+        }
         //until inCache has only 1 element or the end of the traceList is reached
         return 1;
     }
