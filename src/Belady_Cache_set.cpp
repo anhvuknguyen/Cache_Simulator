@@ -8,6 +8,7 @@
 #include <memory>
 #include <list>
 #include <unordered_map>
+#include <assert.h>
 #include <vector>
 
 using namespace std;
@@ -41,7 +42,11 @@ void Belady_Cache_set::addFutureTag(Cache_types::Operation op, int tag){
 
 Miss_Type Belady_Cache_set::lookup(int tag){
     auto targetIt = lineMap->find(tag);
-    traceList->erase(traceList->begin());
+    //every access pops exactly one entry; lookup always precedes evict
+    if(traceList->empty()==false){ 
+        assert(!traceList->empty());
+        traceList->erase(traceList->begin());
+    }
     if(targetIt==lineMap->end()){
         return Miss_Type::Miss;
     }
@@ -54,11 +59,29 @@ Miss_Type Belady_Cache_set::lookup(int tag){
 
 int Belady_Cache_set::evict(){
     if(isFull()){
-        vector<int> inCache;
-        for (Cache_line& line : *lineList) {
+        list<int> inCache;
+        for(Cache_line& line : *lineList){
             inCache.push_back(line.getTag());
         }
         //until inCache has only 1 element or the end of the traceList is reached
+        for(pair<Operation,int>& p : *traceList){
+            if(inCache.size() == 1){
+                break;
+            }
+            int tag = p.second;
+            list<int>::iterator it = inCache.begin();
+            while(it!=inCache.end()){
+                if(*it == tag){
+                    inCache.erase(it);
+                    break;
+                }
+                ++it;
+            }
+        }
+        lineList->erase(lineMap->at(inCache.back()));
+        lineMap->erase(inCache.back());
+        decrementCapacity();
+        incrementEvictions();
         return 1;
     }
     else{
