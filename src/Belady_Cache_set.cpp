@@ -43,10 +43,8 @@ void Belady_Cache_set::addFutureTag(Cache_types::Operation op, int tag){
 Miss_Type Belady_Cache_set::lookup(int tag){
     auto targetIt = lineMap->find(tag);
     //every access pops exactly one entry; lookup always precedes evict
-    if(traceList->empty()==false){ 
-        assert(!traceList->empty());
-        traceList->erase(traceList->begin());
-    }
+    assert(!traceList->empty());
+    traceList->erase(traceList->begin());
     if(targetIt==lineMap->end()){
         return Miss_Type::Miss;
     }
@@ -87,4 +85,21 @@ int Belady_Cache_set::evict(){
     else{
         return -1;
     }
+}
+
+int Belady_Cache_set::insert(int tag){
+    if(lineMap->find(tag)!=lineMap->end()){
+        return -1;
+    }
+    incrementCapacity();
+    lineList->emplace_front(tag,true,false);
+    lineMap->insert({tag,lineList->begin()});
+    return 1;
+}
+
+void Belady_Cache_set::reset(){
+    Cache_set::reset();
+    lineList->clear();
+    lineMap->clear();
+    traceList->clear();
 }

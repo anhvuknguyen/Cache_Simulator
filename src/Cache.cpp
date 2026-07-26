@@ -165,6 +165,7 @@ int Cache::belady_loadFile(string traceFile){
         decompose(address, offset,index,tag);
         cacheArr[index]->addFutureTag(op,tag);
     }
+    return 1;
 }
 
 int Cache::access(Cache_types::Operation op, unsigned int address){

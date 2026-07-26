@@ -30,6 +30,7 @@ SOURCES = 	$(TST_DIR)/main.cpp \
 			$(SRC_DIR)/LIFO_Cache_set.cpp \
 			$(SRC_DIR)/Random_Cache_set.cpp \
 			$(SRC_DIR)/LFU_Cache_set.cpp \
+			$(SRC_DIR)/Belady_Cache_set.cpp \
 			$(SRC_DIR)/Cache.cpp
 
 # Object files (automatically generated from source files)
@@ -48,6 +49,7 @@ HEADERS = 	$(INC_DIR)/Cache_library.h \
 			$(INC_DIR)/LIFO_Cache_set.h \
 			$(INC_DIR)/Random_Cache_set.h \
 			$(INC_DIR)/LFU_Cache_set.h \
+			$(INC_DIR)/Belady_Cache_set.h \
 			$(INC_DIR)/Cache.h
 
 # Default target - builds the executable
