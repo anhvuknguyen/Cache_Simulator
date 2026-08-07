@@ -114,9 +114,7 @@ Cache* buildCache(){
     return new Cache(setSize, numSets, numBlocks, mapTech, repPolicy);
 }
 
-void runTrace(){
-    string traceType_dir;
-    string traceFile;
+void chooseTraceFiles(string &traceType_dir, string &traceFile){
     vector<string> *traceList = new vector<string>();
     int traceSize;
     int traceIndex=-1;
@@ -175,12 +173,24 @@ void runTrace(){
         cerr << "Error: " << e.what() << endl;
     }
     traceFile = traceList->at(traceIndex);
+}
+
+void runTrace(){
+    string traceType_dir;
+    string traceFile;
+    
+    chooseTraceFiles(traceType_dir, traceFile);
     
     ifstream file(traceFile);
     if (!file.is_open()) {
         cerr << "Failed to open file" << std::endl;
         return;
     }
+
+    if(repPolicy==Replacement_Policy::Belady){
+        cache->belady_loadFile(traceFile);
+    }
+
     string operation;
     unsigned int address;
     while (file.good()) {

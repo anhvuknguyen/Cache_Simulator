@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <assert.h>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 using namespace Cache_types;

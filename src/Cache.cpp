@@ -162,7 +162,7 @@ int Cache::belady_loadFile(string traceFile){
         file >> operation >> std::hex >> address;
         Operation op = (operation=="R")? Operation::Read : Operation::Write;
         int offset, index, tag;
-        decompose(address, offset,index,tag);
+        decompose(address,offset,index,tag);
         cacheArr[index]->addFutureTag(op,tag);
     }
     return 1;
