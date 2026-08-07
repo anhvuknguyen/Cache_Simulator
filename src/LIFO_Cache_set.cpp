@@ -48,9 +48,10 @@ int LIFO_Cache_set::evict(){
         decrementCapacity();
         incrementEvictions();
         int tag = lineStack->top().getTag();
+        int dirtyBit = lineStack->top().getDirtyBit();
         lineStack->pop();
         lineMap->erase(tag);
-        return 1;
+        return dirtyBit;
     }
     else{
         return -1;

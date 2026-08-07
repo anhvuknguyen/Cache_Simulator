@@ -61,11 +61,12 @@ int LFU_Cache_set::evict(){
         if(tag==-1){
             return -1;
         }
+        int dirtyBit = (*lineMap).at(tag).second->getDirtyBit();
         lineList->erase((*lineMap).at(tag).second);
         lineMap->erase(tag);
         decrementCapacity();
         incrementEvictions();
-        return 1;
+        return dirtyBit;
     }
     else{
         return -1;

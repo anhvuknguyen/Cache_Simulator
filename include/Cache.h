@@ -47,6 +47,11 @@ public:
     std::string getStats();
     void decompose(unsigned int address, int& offset, int& index, int& tag);
     int belady_loadFile(std::string traceFile);
+
+    Cache_types::Miss_Type levelLookup(int index, int tag);
+    int levelEvict(int index);
+    void levelInsert(int index, int tag);
+
     int access(Cache_types::Operation op, unsigned int address);
     void reset();
 };

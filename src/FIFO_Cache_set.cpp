@@ -48,9 +48,12 @@ int FIFO_Cache_set::evict(){
         decrementCapacity();
         incrementEvictions();
         int tag = lineQueue->front().getTag();
+
+        int dirtyBit = lineQueue->front().getDirtyBit();
+
         lineQueue->pop();
         lineMap->erase(tag);
-        return 1;
+        return dirtyBit;
     }
     else{
         return -1;

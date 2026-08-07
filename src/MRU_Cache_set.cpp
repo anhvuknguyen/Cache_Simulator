@@ -46,9 +46,10 @@ int MRU_Cache_set::evict(){
         decrementCapacity();
         incrementEvictions();
         int tag = lineList->front().getTag();
+        int dirtyBit = lineList->front().getDirtyBit();
         lineList->pop_front();
         lineMap->erase(tag);
-        return 1;
+        return dirtyBit;
     }
     else{
         return -1;

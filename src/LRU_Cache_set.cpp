@@ -46,9 +46,10 @@ int LRU_Cache_set::evict(){
         decrementCapacity();
         incrementEvictions();
         int tag = lineList->back().getTag();
+        int dirtyBit = lineList->back().getDirtyBit();
         lineList->pop_back();
         lineMap->erase(tag);
-        return 1;
+        return dirtyBit;
     }
     else{
         return -1;

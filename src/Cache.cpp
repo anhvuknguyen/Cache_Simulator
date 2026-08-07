@@ -142,6 +142,7 @@ string Cache::getStats(){
     return str;
 }
 
+//Functions
 void Cache::decompose(unsigned int address, int &offset, int &index, int &tag){
     offset = address & ((1<<num_OffsetBits)-1);
     index = (address >> num_OffsetBits) & ((1<<num_IndexBits)-1);
@@ -168,6 +169,19 @@ int Cache::belady_loadFile(string traceFile){
     return 1;
 }
 
+//Access Helper Functions (Also helper functions for hierachy)
+Miss_Type Cache::levelLookup(int index, int tag){
+    return cacheArr[index]->lookup(tag);
+}
+
+int Cache::levelEvict(int index){
+    return cacheArr[index]->evict();
+}
+
+void Cache::levelInsert(int index, int tag){
+    cacheArr[index]->insert(tag);
+}
+
 int Cache::access(Cache_types::Operation op, unsigned int address){
     int offset, index, tag;
     decompose(address, offset,index,tag);
@@ -183,7 +197,7 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
             shadowCache->insert(blockNumber);
         }
         //Handle cacheArr
-        Miss_Type miss_T = cacheArr[index]->lookup(tag);
+        Miss_Type miss_T = levelLookup(index,tag);
         if(miss_T==Miss_Type::Hit){
             cout << "Hit" << endl;
             hit_Count++;
@@ -193,10 +207,10 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
             miss_Count++;
             classifyMiss(address, shadowMiss_T);
             if(cacheArr[index]->isFull()){
-                cacheArr[index]->evict();
+                levelEvict(index);
                 eviction_Count++;
             }
-            cacheArr[index]->insert(tag);
+            levelInsert(index,tag);
         }
     }
     return -1;

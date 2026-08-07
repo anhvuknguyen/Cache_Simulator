@@ -40,8 +40,9 @@ int Random_Cache_set::evict(){
         decrementCapacity();
         incrementEvictions();
         int index = rand() % get_set_Size();
+        int dirtyBit = lineArr->at(index).getDirtyBit();
         lineArr->erase(lineArr->begin() + index);
-        return 1;
+        return dirtyBit;
     }
     else{
         return -1;

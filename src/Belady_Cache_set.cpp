@@ -77,11 +77,14 @@ int Belady_Cache_set::evict(){
                 ++it;
             }
         }
+        
+        int dirtyBit = lineMap->at(inCache.back())->getDirtyBit();
+
         lineList->erase(lineMap->at(inCache.back()));
         lineMap->erase(inCache.back());
         decrementCapacity();
         incrementEvictions();
-        return 1;
+        return dirtyBit;
     }
     else{
         return -1;
