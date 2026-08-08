@@ -42,6 +42,7 @@ private:
     void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
 public:
     Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
+    ~Cache();
     std::string viewCache();
     std::string viewShadowCache();
     std::string getStats();

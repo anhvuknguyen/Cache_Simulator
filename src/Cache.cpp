@@ -110,6 +110,11 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     shadowCache = new LRU_Cache_set(num_Lines,Replacement_Policy::LRU);
 }
 
+//Destructor
+Cache::~Cache(){
+    delete shadowCache;
+}
+
 //Debugging Strings
 string Cache::viewCache(){
     string str;
