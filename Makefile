@@ -31,7 +31,8 @@ SOURCES = 	$(TST_DIR)/main.cpp \
 			$(SRC_DIR)/Random_Cache_set.cpp \
 			$(SRC_DIR)/LFU_Cache_set.cpp \
 			$(SRC_DIR)/Belady_Cache_set.cpp \
-			$(SRC_DIR)/Cache.cpp
+			$(SRC_DIR)/Cache.cpp \
+			$(SRC_DIR)/Cache_hierarchy.cpp
 
 # Object files (automatically generated from source files)
 OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
@@ -50,7 +51,8 @@ HEADERS = 	$(INC_DIR)/Cache_library.h \
 			$(INC_DIR)/Random_Cache_set.h \
 			$(INC_DIR)/LFU_Cache_set.h \
 			$(INC_DIR)/Belady_Cache_set.h \
-			$(INC_DIR)/Cache.h
+			$(INC_DIR)/Cache.h \
+			$(INC_DIR)/Cache_hierarchy.h
 
 # Default target - builds the executable
 all: $(EXECUTABLE)

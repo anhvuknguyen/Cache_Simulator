@@ -17,6 +17,6 @@
 #include "Belady_Cache_set.h"
 
 #include "Cache.h"
-
+#include "Cache_hierarchy.h"
 
 #endif
