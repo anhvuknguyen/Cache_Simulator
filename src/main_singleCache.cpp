@@ -41,7 +41,7 @@ Cache* buildCache(){
     int repPolicy_index = -1;
 
     if(cache!=NULL){
-        cout << "\nMust clear existing cachse first!\n" << endl;
+        cout << "\nMust clear existing cache first!\n" << endl;
         return cache;
     }
 
