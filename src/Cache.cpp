@@ -187,6 +187,26 @@ void Cache::levelInsert(int index, int tag){
     cacheArr[index]->insert(tag);
 }
 
+Miss_Type Cache::insertToShadowCache(unsigned int address){
+    int blockNumber = address >> num_OffsetBits;
+    Miss_Type shadowMiss_T = shadowCache->lookup(blockNumber);
+    if(shadowMiss_T==Miss_Type::Miss){
+        if(shadowCache->isFull()){
+            shadowCache->evict();
+        }
+        shadowCache->insert(blockNumber);
+    }
+    return shadowMiss_T;
+}
+
+void Cache::incrementHit(){
+    hit_Count++;
+}
+
+void Cache::incrementMiss(){
+    miss_Count++;
+}
+
 int Cache::access(Cache_types::Operation op, unsigned int address){
     int offset, index, tag;
     decompose(address, offset,index,tag);

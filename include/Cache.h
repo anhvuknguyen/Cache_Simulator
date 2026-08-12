@@ -52,6 +52,9 @@ public:
     Cache_types::Miss_Type levelLookup(int index, int tag);
     int levelEvict(int index);
     void levelInsert(int index, int tag);
+    Miss_Type insertToShadowCache(unsigned int address);
+    void incrementHit();
+    void incrementMiss();
 
     int access(Cache_types::Operation op, unsigned int address);
     void reset();

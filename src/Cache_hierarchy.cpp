@@ -43,16 +43,50 @@ int Cache_hierarchy::belady_loadFile(string traceFile){
     return hierarchy.at(0)->belady_loadFile(traceFile);
 }
 
+int Cache_hierarchy::hierarchicalLookup(unsigned int address){
+    int offset, index, tag;
+    int nMisses;    //Count how many misses we have so we know how many inserts we need to do
+    for(int i=0;i<hierarchy_size;i++){
+        hierarchy.at(i)->decompose(address,offset,index,tag); //fills the respective bits
+        Miss_Type miss_T = hierarchy.at(i)->levelLookup(index,tag);
+        if(miss_T==Miss_Type::Hit){
+            cout << "Hit in L["+to_string(i+1)+"]" << endl;
+            hierarchy.at(i)->incrementHit();
+        }
+    }
+}
+
 int Cache_hierarchy::access(Operation op, unsigned int address){
+    vector<Miss_Type> shadow_miss_v;
+    if(op==Operation::Read){
+        //Insert to all 3 shadow Caches
+        for(int i=0;i<hierarchy_size;i++){
+            Miss_Type shadowMiss = hierarchy.at(i)->insertToShadowCache(address);
+            shadow_miss_v.push_back(shadowMiss);
+        }
+        //Handle All 3 lookups
+        hierarchicalLookup(address);
+    }
+    
     return 0;
 }
 
 std::string Cache_hierarchy::viewCache(){
-    return "";
+    string str;
+    for(int i=0;i<hierarchy_size;i++){
+        str+="L["+to_string(i+1)+"]:\n";
+        str+=hierarchy.at(i)->viewCache();
+    }
+    return str;
 }
 
 std::string Cache_hierarchy::getStats(){
-    return "";
+    string str;
+    for(int i=0;i<hierarchy_size;i++){
+        str+="L["+to_string(i+1)+"]:\n";
+        str+=hierarchy.at(i)->getStats();
+    }
+    return str;
 }
 
 void Cache_hierarchy::reset(){
