@@ -44,6 +44,13 @@ int Cache_hierarchy::belady_loadFile(string traceFile){
 }
 
 int Cache_hierarchy::hierarchicalLookup(unsigned int address){
+    vector<Miss_Type> shadow_miss_v;
+    //Insert to all 3 shadow Caches
+    for(int i=0;i<hierarchy_size;i++){
+        Miss_Type shadowMiss = hierarchy.at(i)->insertToShadowCache(address);
+        shadow_miss_v.push_back(shadowMiss);
+    }
+    
     int offset, index, tag;
     int nMisses;    //Count how many misses we have so we know how many inserts we need to do
     for(int i=0;i<hierarchy_size;i++){
@@ -52,20 +59,23 @@ int Cache_hierarchy::hierarchicalLookup(unsigned int address){
         if(miss_T==Miss_Type::Hit){
             cout << "Hit in L["+to_string(i+1)+"]" << endl;
             hierarchy.at(i)->incrementHit();
+            return nMisses;
+        }
+        else if(miss_T==Miss_Type::Miss){
+            cout << "Miss in L["+to_string(i+1)+"]" << endl;
+            hierarchy.at(i)->incrementMiss();
+            hierarchy.at(i)->classifyMiss(address,shadow_miss_v.at(i));
+            nMisses++;
         }
     }
+    return nMisses;
 }
 
 int Cache_hierarchy::access(Operation op, unsigned int address){
-    vector<Miss_Type> shadow_miss_v;
     if(op==Operation::Read){
-        //Insert to all 3 shadow Caches
-        for(int i=0;i<hierarchy_size;i++){
-            Miss_Type shadowMiss = hierarchy.at(i)->insertToShadowCache(address);
-            shadow_miss_v.push_back(shadowMiss);
-        }
         //Handle All 3 lookups
-        hierarchicalLookup(address);
+        int nMisses = hierarchicalLookup(address); //Counts how many misses (and therefore, how many hits)
+        
     }
     
     return 0;

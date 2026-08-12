@@ -39,7 +39,6 @@ private:
 
     void validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::unique_ptr<Cache_set> cacheFactory(int setSize, Cache_types::Replacement_Policy repPolicy);
-    void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
 public:
     Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     ~Cache();
@@ -55,6 +54,7 @@ public:
     Miss_Type insertToShadowCache(unsigned int address);
     void incrementHit();
     void incrementMiss();
+    void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
 
     int access(Cache_types::Operation op, unsigned int address);
     void reset();
