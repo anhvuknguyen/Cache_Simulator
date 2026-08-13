@@ -40,7 +40,8 @@ public:
     int virtual evict() = 0;                                //***MUST INCREMENT EVICTIONS***
     int virtual insert(int tag) = 0;
 
-    virtual void addFutureTag(Cache_types::Operation op, int tag) {};                      //For Belady ONLY
+    virtual void addFutureTag(Cache_types::Operation op, int tag) {}; //For Belady ONLY
+    virtual void resetTraceList() {}; //For Belady ONLY
     
     void virtual reset();
 };

@@ -138,11 +138,11 @@ string Cache::getStats(){
         "\n\t      Offset Bits: " + to_string(num_OffsetBits) +
         "\n";
     str += "Cache Stats: \n\t             Hits: " + to_string(hit_Count) +
-        "\n\t           Misses: " + to_string(miss_Count) +
-        "\n\t        Evictions: " + to_string(eviction_Count) +
         "\n\tCompulsory Misses: " + to_string(compulsory_Miss_Count) +
         "\n\t  Conflict Misses: " + to_string(conflict_Miss_Count) +
         "\n\t  Capacity Misses: " + to_string(capacity_Miss_Count) +
+        "\n\t     Total Misses: " + to_string(miss_Count) +
+        "\n\t        Evictions: " + to_string(eviction_Count) +
         "\n";
     return str;
 }
@@ -157,6 +157,9 @@ void Cache::decompose(unsigned int address, int &offset, int &index, int &tag){
 int Cache::belady_loadFile(string traceFile){
     if(replacement_Policy!=Replacement_Policy::Belady){
         return -1;
+    }
+    for(int i=0;i<num_Sets;i++){
+        cacheArr.at(i)->resetTraceList();
     }
     ifstream file(traceFile);
     if (!file.is_open()) {
@@ -180,6 +183,7 @@ Miss_Type Cache::levelLookup(int index, int tag){
 }
 
 int Cache::levelEvict(int index){
+    eviction_Count++;
     return cacheArr[index]->evict();
 }
 
@@ -205,6 +209,10 @@ void Cache::incrementHit(){
 
 void Cache::incrementMiss(){
     miss_Count++;
+}
+
+bool Cache::indexIsFull(int index){
+    return cacheArr[index]->isFull();
 }
 
 int Cache::access(Cache_types::Operation op, unsigned int address){
@@ -233,7 +241,6 @@ int Cache::access(Cache_types::Operation op, unsigned int address){
             classifyMiss(address, shadowMiss_T);
             if(cacheArr[index]->isFull()){
                 levelEvict(index);
-                eviction_Count++;
             }
             levelInsert(index,tag);
         }

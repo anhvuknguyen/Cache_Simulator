@@ -38,5 +38,14 @@ namespace Cache_types{
         Read,
         Write
     };
+
+    //Level Configurations
+    struct Level_config{
+        int set_size;
+        int num_sets;
+        int num_blocks;
+        Mapping_Technique mapping_Tech;
+        Replacement_Policy replacement_Pol;
+    };
 }
 #endif

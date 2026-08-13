@@ -14,22 +14,15 @@ using namespace std;
 using namespace Cache_utils;
 using namespace Cache_types;
 
-Cache_hierarchy::Cache_hierarchy(int num_caches, std::vector<int> set_size_v_in, std::vector<int> num_sets_v_in, std::vector<int> num_blocks_v_in, std::vector<Mapping_Technique> mapping_Techniques_in, std::vector<Replacement_Policy> replacement_Policies_in){
+Cache_hierarchy::Cache_hierarchy(int num_caches, std::vector<Level_config> level_config_v_in){
     hierarchy_size = num_caches;
-
+    level_config_v = level_config_v_in;
     for(int i=0;i<hierarchy_size;i++){
-        int nLines_perSet = set_size_v_in.at(i);
-        int nSets = num_sets_v_in.at(i);
-        int nBlocks = num_blocks_v_in.at(i);
-        Mapping_Technique mTech = mapping_Techniques_in.at(i);
-        Replacement_Policy rPol = replacement_Policies_in.at(i);
-
-        //Populate respective vectors
-        set_size_v.emplace_back(nLines_perSet);
-        num_sets_v.emplace_back(nSets);
-        num_blocks_v.emplace_back(nBlocks);
-        mapping_Techniques.emplace_back(mTech);
-        replacement_Policies.emplace_back(rPol);
+        int nLines_perSet = level_config_v_in.at(i).set_size;
+        int nSets = level_config_v_in.at(i).num_sets;
+        int nBlocks = level_config_v_in.at(i).num_blocks;
+        Mapping_Technique mTech = level_config_v_in.at(i).mapping_Tech;
+        Replacement_Policy rPol = level_config_v_in.at(i).replacement_Pol;
 
         //Construct caches
         hierarchy.push_back(make_unique<Cache>(nLines_perSet,nSets,nBlocks,mTech,rPol));
@@ -52,7 +45,7 @@ int Cache_hierarchy::hierarchicalLookup(unsigned int address){
     }
     
     int offset, index, tag;
-    int nMisses;    //Count how many misses we have so we know how many inserts we need to do
+    int nMisses=0;    //Count how many misses we have so we know how many inserts we need to do
     for(int i=0;i<hierarchy_size;i++){
         hierarchy.at(i)->decompose(address,offset,index,tag); //fills the respective bits
         Miss_Type miss_T = hierarchy.at(i)->levelLookup(index,tag);
@@ -71,14 +64,26 @@ int Cache_hierarchy::hierarchicalLookup(unsigned int address){
     return nMisses;
 }
 
+void Cache_hierarchy::hierarchicalInsert(int nMisses, unsigned int address){
+    int offset, index, tag;
+    for(int i=nMisses-1;i>=0;i--){
+        hierarchy.at(i)->decompose(address,offset,index,tag);
+        if(hierarchy.at(i)->indexIsFull(index)){
+            hierarchy.at(i)->levelEvict(index);
+        }
+        hierarchy.at(i)->levelInsert(index,tag);
+    }
+}
+
 int Cache_hierarchy::access(Operation op, unsigned int address){
     if(op==Operation::Read){
         //Handle All 3 lookups
         int nMisses = hierarchicalLookup(address); //Counts how many misses (and therefore, how many hits)
-        
+        hierarchicalInsert(nMisses,address);
+        return 1;
     }
     
-    return 0;
+    return -1;
 }
 
 std::string Cache_hierarchy::viewCache(){
@@ -101,6 +106,6 @@ std::string Cache_hierarchy::getStats(){
 
 void Cache_hierarchy::reset(){
     for(int i=0;i<hierarchy_size;i++){
-        hierarchy.at(i).reset();
+        hierarchy.at(i)->reset();
     }
 }

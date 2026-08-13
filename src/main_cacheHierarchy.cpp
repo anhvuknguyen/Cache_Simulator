@@ -28,11 +28,7 @@ int REPPOLICY_size = 8;
 
 //Cache Stats
 int hierarchy_size = -1;
-vector<int> set_size_v;
-vector<int> num_sets_v;
-vector<int> num_blocks_v;
-vector<Cache_types::Mapping_Technique> mapping_Techniques;
-vector<Cache_types::Replacement_Policy> replacement_Policies;
+vector<Level_config> level_config_v;
 Cache_hierarchy *cache_h = NULL;
 
 //Trace Directory
@@ -54,6 +50,9 @@ Cache_hierarchy* buildCacheHierarchy(){
     for(int j=0;j<hierarchy_size;j++){
         int mapTech_index = -1;
         int repPolicy_index = -1;
+
+        Level_config cfg;
+
         int numBlocks = 0;
         int setSize = 0;
         int numSets = 0;
@@ -71,7 +70,7 @@ Cache_hierarchy* buildCacheHierarchy(){
             cin >> mapTech_index;
         }while(!(mapTech_index>-1 && mapTech_index<MAPTECH_size && !cin.fail()));
         mapTech = MAPTECH[mapTech_index];
-        mapping_Techniques.push_back(mapTech);
+        cfg.mapping_Tech=mapTech;
 
         do{
             cin.clear();
@@ -79,7 +78,7 @@ Cache_hierarchy* buildCacheHierarchy(){
             cout << "Choose the number of blocks per line for L["+to_string(j+1)+"]: ";
             cin >> numBlocks;
         }while(numBlocks==0 || !isPowerOfTwo(numBlocks) || cin.fail());
-        num_blocks_v.push_back(numBlocks);
+        cfg.num_blocks=numBlocks;
 
         if(mapTech==Mapping_Technique::Direct){
             do{
@@ -91,9 +90,10 @@ Cache_hierarchy* buildCacheHierarchy(){
             setSize=1;
             repPolicy = REPPOLICY[0];
 
-            num_sets_v.push_back(numSets);
-            set_size_v.push_back(setSize);
-            replacement_Policies.push_back(repPolicy);
+            cfg.num_sets=numSets;
+            cfg.set_size=setSize;
+            cfg.replacement_Pol=repPolicy;
+            level_config_v.push_back(cfg);
             continue;
         }
         else if(mapTech==Mapping_Technique::Fully_Associative){
@@ -105,8 +105,8 @@ Cache_hierarchy* buildCacheHierarchy(){
             }while(setSize==0 || !isPowerOfTwo(setSize) || cin.fail());
             numSets=1;
 
-            set_size_v.push_back(setSize);
-            num_sets_v.push_back(numSets);
+            cfg.set_size=setSize;
+            cfg.num_sets=numSets;
         }
         else if(mapTech==Mapping_Technique::Set_Associative){
             do{
@@ -122,8 +122,8 @@ Cache_hierarchy* buildCacheHierarchy(){
                 cin >> numSets;
             }while(numSets==0 || !isPowerOfTwo(numSets) || cin.fail());
 
-            set_size_v.push_back(setSize);
-            num_sets_v.push_back(numSets);
+            cfg.set_size=setSize;
+            cfg.num_sets=numSets;
         }
 
         do{
@@ -143,10 +143,12 @@ Cache_hierarchy* buildCacheHierarchy(){
 
         }while(!(repPolicy_index>-1 && repPolicy_index<REPPOLICY_size && !cin.fail()));
         repPolicy = REPPOLICY[repPolicy_index];
-        replacement_Policies.push_back(repPolicy);
+        cfg.replacement_Pol=repPolicy;
+
+        level_config_v.push_back(cfg);
     }
 
-    return new Cache_hierarchy(hierarchy_size,set_size_v,num_sets_v,num_blocks_v,mapping_Techniques,replacement_Policies);
+    return new Cache_hierarchy(hierarchy_size,level_config_v);
 }
 
 void chooseTraceFiles(string &traceType_dir, string &traceFile){
@@ -222,7 +224,7 @@ void runTrace(){
         return;
     }
 
-    if(hierarchy_size==1 && replacement_Policies.at(0)==Replacement_Policy::Belady){
+    if(hierarchy_size==1 && level_config_v.at(0).replacement_Pol==Replacement_Policy::Belady){
         cache_h->belady_loadFile(traceFile);
     }
 
@@ -237,8 +239,10 @@ void runTrace(){
     cout << cache_h->getStats() << endl;
 }
 
-void clearCacheHierarchy(){
+void deleteCacheHierarchy(){
     delete cache_h;
+    hierarchy_size=-1;
+    level_config_v.clear();
     cache_h=NULL;
 }
 
@@ -285,7 +289,7 @@ int main() {
                 continue;
             }
             else{
-                clearCacheHierarchy();
+                deleteCacheHierarchy();
             }
         }
         else if(choice=="q"){

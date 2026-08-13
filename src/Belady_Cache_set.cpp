@@ -41,6 +41,10 @@ void Belady_Cache_set::addFutureTag(Cache_types::Operation op, int tag){
     traceList->emplace_back(op,tag);
 }
 
+void Belady_Cache_set::resetTraceList(){
+    traceList->clear();
+}
+
 Miss_Type Belady_Cache_set::lookup(int tag){
     auto targetIt = lineMap->find(tag);
     //every access pops exactly one entry; lookup always precedes evict

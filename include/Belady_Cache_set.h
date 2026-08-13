@@ -21,6 +21,7 @@ public:
     std::string toString() override;
 
     void addFutureTag(Cache_types::Operation op, int tag) override;
+    void resetTraceList() override;
     Cache_types::Miss_Type lookup(int tag) override;
     int evict() override;
     int insert(int tag) override;
