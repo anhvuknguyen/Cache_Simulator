@@ -50,7 +50,7 @@ int Random_Cache_set::evict(){
 }
 
 int Random_Cache_set::insert(int tag){
-    if(lookup(tag)==Miss_Type::Hit){ ////ISSUE
+    if(lookup(tag)==Miss_Type::Hit){
         return -1;
     }
     incrementCapacity();

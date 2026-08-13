@@ -12,6 +12,7 @@ private:
     //Array of Caches
     std::vector<std::unique_ptr<Cache>> hierarchy;
     int hierarchy_size;
+    int memory_accesses;
     
     //Each index corresponds with level
     std::vector<Cache_types::Level_config> level_config_v;

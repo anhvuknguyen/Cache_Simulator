@@ -22,7 +22,7 @@ string Direct_Cache_set::toString(){
 }
 
 Miss_Type Direct_Cache_set::lookup(int tag){
-    if(line->getTag() == tag){
+    if(line->getTag() == tag && line->getValidBit()==1){
         return Miss_Type::Hit;
     }
     else{
@@ -45,7 +45,7 @@ int Direct_Cache_set::evict(){
 }
 
 int Direct_Cache_set::insert(int tag){
-    if(line->getTag()!=tag){
+    if(line->getTag()!=tag || line->getValidBit()==0){
         line->fill(tag,1,0);
         incrementCapacity();
         return 1;

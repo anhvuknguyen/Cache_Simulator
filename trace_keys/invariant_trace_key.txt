@@ -1,0 +1,5 @@
+Cache Properties: Any combination of caches
+
+accesses(L2) == misses(L1) and accesses(L3) == misses(L2)
+hierarchy total references == accesses(L1)
+hits(L1) + hits(L2) + hits(L3) + memory_accesses(L3 misses) == total references

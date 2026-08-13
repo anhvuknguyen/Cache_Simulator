@@ -23,6 +23,7 @@ private:
     int num_OffsetBits;
 
     //Cache Stats
+    int accesses;
     int hit_Count;
     int miss_Count;
     int eviction_Count;
@@ -45,6 +46,7 @@ public:
     std::string viewCache();
     std::string viewShadowCache();
     std::string getStats();
+    int getHits();
     void decompose(unsigned int address, int& offset, int& index, int& tag);
     int belady_loadFile(std::string traceFile);
 
@@ -54,6 +56,7 @@ public:
     Cache_types::Miss_Type insertToShadowCache(unsigned int address);
     void incrementHit();
     void incrementMiss();
+    void incrementAccesses();
     void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
     bool indexIsFull(int index);
 

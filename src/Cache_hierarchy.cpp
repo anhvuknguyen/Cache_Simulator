@@ -15,6 +15,7 @@ using namespace Cache_utils;
 using namespace Cache_types;
 
 Cache_hierarchy::Cache_hierarchy(int num_caches, std::vector<Level_config> level_config_v_in){
+    memory_accesses=0;
     hierarchy_size = num_caches;
     level_config_v = level_config_v_in;
     for(int i=0;i<hierarchy_size;i++){
@@ -49,6 +50,7 @@ int Cache_hierarchy::hierarchicalLookup(unsigned int address){
     for(int i=0;i<hierarchy_size;i++){
         hierarchy.at(i)->decompose(address,offset,index,tag); //fills the respective bits
         Miss_Type miss_T = hierarchy.at(i)->levelLookup(index,tag);
+        hierarchy.at(i)->incrementAccesses();
         if(miss_T==Miss_Type::Hit){
             cout << "Hit in L["+to_string(i+1)+"]" << endl;
             hierarchy.at(i)->incrementHit();
@@ -61,6 +63,7 @@ int Cache_hierarchy::hierarchicalLookup(unsigned int address){
             nMisses++;
         }
     }
+    memory_accesses++;
     return nMisses;
 }
 
@@ -80,6 +83,7 @@ int Cache_hierarchy::access(Operation op, unsigned int address){
         //Handle All 3 lookups
         int nMisses = hierarchicalLookup(address); //Counts how many misses (and therefore, how many hits)
         hierarchicalInsert(nMisses,address);
+        cout << "" << endl;
         return 1;
     }
     
@@ -101,6 +105,12 @@ std::string Cache_hierarchy::getStats(){
         str+="L["+to_string(i+1)+"]:\n";
         str+=hierarchy.at(i)->getStats();
     }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="L["+to_string(i+1)+"] Hits: ";
+        str+=to_string(hierarchy.at(i)->getHits())+"\n";
+    }
+    str+="Total Memory Accesses: "+to_string(memory_accesses)+"\n";
     return str;
 }
 
@@ -108,4 +118,5 @@ void Cache_hierarchy::reset(){
     for(int i=0;i<hierarchy_size;i++){
         hierarchy.at(i)->reset();
     }
+    memory_accesses=0;
 }

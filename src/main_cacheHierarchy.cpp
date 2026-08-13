@@ -247,8 +247,11 @@ void deleteCacheHierarchy(){
 }
 
 void viewCacheHierarchy(){
-    cout << cache_h->getStats() << endl;
     cout << cache_h->viewCache() << endl;
+}
+
+void viewCacheHierarchyStats(){
+    cout << cache_h->getStats() << endl;
 }
 
 void resetCacheHierarchy(){
@@ -262,6 +265,7 @@ int main() {
         cout << "What would you like to do?" << endl;
         cout << "[b] Build Cache Hierarchy" << endl;
         cout << "[v] View Cache Hierarchy" << endl;
+        cout << "[s] View Cache Hierarchy Stats" << endl;
         cout << "[t] Trace File" << endl;
         cout << "[r] Reset Cache Hierarchy" << endl;
         cout << "[d] Delete Cache Hierarchy" << endl;
@@ -303,6 +307,15 @@ int main() {
             }
             else{
                 viewCacheHierarchy();
+            }
+        }
+        else if(choice=="s"){
+            if(cache_h==NULL){
+                cout << "\nCache has not been built!\n" << endl;
+                continue;
+            }
+            else{
+                viewCacheHierarchyStats();
             }
         }
         else if(choice=="r"){

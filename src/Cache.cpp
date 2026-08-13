@@ -95,6 +95,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     num_Sets = numSets;
     num_Blocks = numBlocks;
     eviction_Count = 0;
+    accesses = 0;
 
     num_OffsetBits = log2(numBlocks);
     num_IndexBits = log2(numSets);
@@ -115,7 +116,7 @@ Cache::~Cache(){
     delete shadowCache;
 }
 
-//Debugging Strings
+//To_Strings
 string Cache::viewCache(){
     string str;
     for(int i=0;i<num_Sets;i++){
@@ -131,20 +132,26 @@ string Cache::viewShadowCache(){
 
 string Cache::getStats(){
     string str;
-    str += "Cache: \n\t             Size: " + to_string(cache_Size)  +
-        "\n\t    Num. of Lines: " + to_string(num_Lines) +
-        "\n\t         Tag Bits: " + to_string(num_TagBits) +
-        "\n\t       Index Bits: " + to_string(num_IndexBits) +
-        "\n\t      Offset Bits: " + to_string(num_OffsetBits) +
-        "\n";
+    // str += "Cache: \n\t             Size: " + to_string(cache_Size)  +
+    //     "\n\t    Num. of Lines: " + to_string(num_Lines) +
+    //     "\n\t         Tag Bits: " + to_string(num_TagBits) +
+    //     "\n\t       Index Bits: " + to_string(num_IndexBits) +
+    //     "\n\t      Offset Bits: " + to_string(num_OffsetBits) +
+    //     "\n";
     str += "Cache Stats: \n\t             Hits: " + to_string(hit_Count) +
         "\n\tCompulsory Misses: " + to_string(compulsory_Miss_Count) +
         "\n\t  Conflict Misses: " + to_string(conflict_Miss_Count) +
         "\n\t  Capacity Misses: " + to_string(capacity_Miss_Count) +
         "\n\t     Total Misses: " + to_string(miss_Count) +
         "\n\t        Evictions: " + to_string(eviction_Count) +
+        "\n\t         Accesses: " + to_string(accesses) +
         "\n";
     return str;
+}
+
+//Getters
+int Cache::getHits(){
+    return hit_Count;
 }
 
 //Functions
@@ -211,11 +218,16 @@ void Cache::incrementMiss(){
     miss_Count++;
 }
 
+void Cache::incrementAccesses(){
+    accesses++;
+}
+
 bool Cache::indexIsFull(int index){
     return cacheArr[index]->isFull();
 }
 
 int Cache::access(Cache_types::Operation op, unsigned int address){
+    accesses++;
     int offset, index, tag;
     decompose(address, offset,index,tag);
     
@@ -284,6 +296,7 @@ void Cache::reset(){
     compulsory_Miss_Count=0;
     capacity_Miss_Count=0;
     conflict_Miss_Count=0;
+    accesses=0;
 
     blockSet.clear();
     shadowCache->reset();

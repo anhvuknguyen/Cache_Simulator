@@ -18,7 +18,7 @@ All three are implemented using a unified set-based architecture. Direct-mapped 
 - **MRU** — evicts the most recently used line
 - **LFU** — evicts the least frequently accessed line
 - **Random** — evicts a randomly selected line
-- **Belady's optimal** — evicts the line whose next access is furthest in the future (possible in simulation since the full trace is known in advance)
+- **Belady's optimal** — evicts the line whose next access is furthest in the future (possible in simulation since the full trace is known in advance -- Belady is only available for single-level caches; Belady requires the complete future access stream, which is only knowable for L1 since lower levels see a runtime-dependent filtered stream)
 
 ### Write policies
 - **Write-through** — writes propagate to main memory immediately
