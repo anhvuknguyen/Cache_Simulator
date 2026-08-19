@@ -13,6 +13,10 @@ public:
     ~Direct_Cache_set() override;
     std::string toString() override;
 
+    void set_DirtyBit(int tag) override;
+    void clear_DirtyBit(int tag) override;
+
+    Cache_types::Miss_Type contains(int tag) override;
     Cache_types::Miss_Type lookup(int tag) override;
     int evict() override;
     int insert(int tag) override;

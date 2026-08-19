@@ -11,7 +11,7 @@ using namespace std;
 using namespace Cache_types;
 
 FIFO_Cache_set::FIFO_Cache_set(int setSize, Cache_types::Replacement_Policy repPolicy) : Cache_set(setSize,repPolicy){
-    lineQueue = new queue<Cache_line>();
+    lineQueue = new queue<int>();
     lineMap = new unordered_map<int,Cache_line>();
 }
 
@@ -24,13 +24,25 @@ std::string FIFO_Cache_set::toString(){
     return toString_Tool(*lineQueue);
 }
 
-std::string FIFO_Cache_set::toString_Tool(std::queue<Cache_line> copy){
+std::string FIFO_Cache_set::toString_Tool(std::queue<int> copy){
     string str;
     while(!copy.empty()){
-        str+=copy.front().toString() + "\n";
+        str+=lineMap->at(copy.front()).toString() + "\n";
         copy.pop();
     }
     return str;
+}
+
+void FIFO_Cache_set::set_DirtyBit(int tag){
+    lineMap->at(tag).setDirtyBit(1);
+}
+
+void FIFO_Cache_set::clear_DirtyBit(int tag){
+    lineMap->at(tag).setDirtyBit(0);
+}
+
+Miss_Type FIFO_Cache_set::contains(int tag){
+    return lookup(tag);
 }
 
 Miss_Type FIFO_Cache_set::lookup(int tag){
@@ -47,9 +59,8 @@ int FIFO_Cache_set::evict(){
     if(isFull()){
         decrementCapacity();
         incrementEvictions();
-        int tag = lineQueue->front().getTag();
-
-        int dirtyBit = lineQueue->front().getDirtyBit();
+        int tag = lineQueue->front();
+        int dirtyBit = lineMap->at(tag).getDirtyBit();
 
         lineQueue->pop();
         lineMap->erase(tag);
@@ -65,8 +76,8 @@ int FIFO_Cache_set::insert(int tag){
         return -1;
     }
     incrementCapacity();
-    lineQueue->emplace(tag, true, false);
-    lineMap->insert({tag,lineQueue->back()});
+    lineQueue->emplace(tag);
+    lineMap->insert({tag,Cache_line(tag,true,false)});
     return 1;
 }
 

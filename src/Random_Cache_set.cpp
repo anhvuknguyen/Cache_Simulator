@@ -25,6 +25,28 @@ std::string Random_Cache_set::toString(){
     return str;
 }
 
+void Random_Cache_set::set_DirtyBit(int tag){
+    for(int i=0;i<(int)lineArr->size();i++){
+        if(lineArr->at(i).getTag() == tag){
+            lineArr->at(i).setDirtyBit(1);
+            return;
+        }
+    }
+}
+
+void Random_Cache_set::clear_DirtyBit(int tag){
+    for(int i=0;i<(int)lineArr->size();i++){
+        if(lineArr->at(i).getTag() == tag){
+            lineArr->at(i).setDirtyBit(0);
+            return;
+        }
+    }
+}
+
+Miss_Type Random_Cache_set::contains(int tag){
+    return lookup(tag);
+}
+
 Cache_types::Miss_Type Random_Cache_set::lookup(int tag){
     if(lineArr->empty())return Miss_Type::Miss;
     for(int i=0;i<((int)lineArr->size());i++){

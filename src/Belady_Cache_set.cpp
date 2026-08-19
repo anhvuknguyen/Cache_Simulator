@@ -37,12 +37,32 @@ string Belady_Cache_set::toString() {
     return str;
 }
 
+void Belady_Cache_set::set_DirtyBit(int tag){
+    lineMap->at(tag)->setDirtyBit(1);
+}
+
+void Belady_Cache_set::clear_DirtyBit(int tag){
+    lineMap->at(tag)->setDirtyBit(0);
+}
+
 void Belady_Cache_set::addFutureTag(Cache_types::Operation op, int tag){
     traceList->emplace_back(op,tag);
 }
 
 void Belady_Cache_set::resetTraceList(){
     traceList->clear();
+}
+
+Miss_Type Belady_Cache_set::contains(int tag){
+    auto targetIt = lineMap->find(tag);
+    assert(!traceList->empty());
+    traceList->erase(traceList->begin());
+    if(targetIt==lineMap->end()){
+        return Miss_Type::Miss;
+    }
+    else{
+        return Miss_Type::Hit;
+    }
 }
 
 Miss_Type Belady_Cache_set::lookup(int tag){

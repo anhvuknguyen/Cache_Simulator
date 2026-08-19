@@ -26,6 +26,10 @@ Replacement_Policy REPPOLICY[] = {Replacement_Policy::Direct,Replacement_Policy:
 string REPPOLICY_strings[] = {"Direct", "Random", "FIFO", "LIFO", "LRU", "MRU", "LFU", "Belady"};
 int REPPOLICY_size = 8;
 
+Write_Strategy WRITESTRAT[] = {Write_Strategy::Write_Back_Write_Allocate,Write_Strategy::Write_Through_No_Write_Allocate};
+string WRITESTRAT_strings[] = {"Write-Back, Write-Allocate", "Write-Through, No-Write-Allocate"};
+int WRITESTRAT_size = 2;
+
 //Cache Stats
 int hierarchy_size = -1;
 vector<Level_config> level_config_v;
@@ -50,6 +54,7 @@ Cache_hierarchy* buildCacheHierarchy(){
     for(int j=0;j<hierarchy_size;j++){
         int mapTech_index = -1;
         int repPolicy_index = -1;
+        int writeStrat_index = -1;
 
         Level_config cfg;
 
@@ -58,6 +63,7 @@ Cache_hierarchy* buildCacheHierarchy(){
         int numSets = 0;
         Mapping_Technique mapTech;
         Replacement_Policy repPolicy;
+        Write_Strategy writeStrat;
 
         do{
             cin.clear();
@@ -144,6 +150,20 @@ Cache_hierarchy* buildCacheHierarchy(){
         }while(!(repPolicy_index>-1 && repPolicy_index<REPPOLICY_size && !cin.fail()));
         repPolicy = REPPOLICY[repPolicy_index];
         cfg.replacement_Pol=repPolicy;
+
+        do{
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Choose a write strategy for L["+to_string(j+1)+"]: " << endl;
+            for(int i=0;i<WRITESTRAT_size;i++){
+                cout << "[" + to_string(i) + "] " + WRITESTRAT_strings[i] + "\n";
+            }
+            cout << ">> ";
+            cin >> writeStrat_index;
+
+        }while(!(writeStrat_index>-1 && writeStrat_index<WRITESTRAT_size && !cin.fail()));
+        writeStrat = WRITESTRAT[writeStrat_index];
+        cfg.write_Strat = writeStrat;
 
         level_config_v.push_back(cfg);
     }

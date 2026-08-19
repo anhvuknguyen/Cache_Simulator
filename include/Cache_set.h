@@ -36,8 +36,12 @@ public:
     virtual ~Cache_set();
     std::string virtual toString() = 0;
 
+    void virtual set_DirtyBit(int tag) = 0;
+    void virtual clear_DirtyBit(int tag) = 0;
+    
+    Cache_types::Miss_Type virtual contains(int tag) = 0;
     Cache_types::Miss_Type virtual lookup(int tag) = 0;
-    int virtual evict() = 0;                                //***MUST INCREMENT EVICTIONS***
+    int virtual evict() = 0;
     int virtual insert(int tag) = 0;
 
     virtual void addFutureTag(Cache_types::Operation op, int tag) {}; //For Belady ONLY

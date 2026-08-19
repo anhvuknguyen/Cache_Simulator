@@ -12,6 +12,7 @@ class Cache{
 private:
     Cache_types::Mapping_Technique mapping_Technique;
     Cache_types::Replacement_Policy replacement_Policy;
+    Cache_types::Write_Strategy write_Strategy;
     int cache_Size;
     int num_Lines;
     int num_Sets;
@@ -23,10 +24,15 @@ private:
     int num_OffsetBits;
 
     //Cache Stats
-    int accesses;
-    int hit_Count;
-    int miss_Count;
+    int reads;
+    int writes;
+    int read_hit_Count;
+    int read_miss_Count;
+    int write_hit_Count;
+    int write_miss_Count;
+    int writes_to_next_level;
     int eviction_Count;
+
     int compulsory_Miss_Count;
     int capacity_Miss_Count;
     int conflict_Miss_Count;
@@ -41,26 +47,33 @@ private:
     void validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::unique_ptr<Cache_set> cacheFactory(int setSize, Cache_types::Replacement_Policy repPolicy);
 public:
-    Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
+    Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy, Cache_types::Write_Strategy writeStrat);
     ~Cache();
     std::string viewCache();
     std::string viewShadowCache();
     std::string getStats();
-    int getHits();
+    int getReadHits();
+    int getWriteHits();
+    Cache_types::Write_Strategy getWriteStrat();
     void decompose(unsigned int address, int& offset, int& index, int& tag);
     int belady_loadFile(std::string traceFile);
+    void setDirtyBit(int index,int tag);
 
+    Cache_types::Miss_Type levelContains(int index,int tag);
     Cache_types::Miss_Type levelLookup(int index, int tag);
     int levelEvict(int index);
     void levelInsert(int index, int tag);
     Cache_types::Miss_Type insertToShadowCache(unsigned int address);
-    void incrementHit();
-    void incrementMiss();
-    void incrementAccesses();
+    void incrementReads();
+    void incrementWrites();
+    void incrementReadHit();
+    void incrementReadMiss();
+    void incrementWriteHit();
+    void incrementWriteMiss();
+    void incrementWritesToNextLevel();
     void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
     bool indexIsFull(int index);
 
-    int access(Cache_types::Operation op, unsigned int address);
     void reset();
 };
 

@@ -23,8 +23,8 @@ namespace Cache_types{
 
     //Write Strategy
     enum class Write_Strategy:char{
-        Write_Back,
-        Write_Through
+        Write_Back_Write_Allocate,
+        Write_Through_No_Write_Allocate
     };
 
     //Cache Miss Types
@@ -39,6 +39,12 @@ namespace Cache_types{
         Write
     };
 
+    //Fetch Origin
+    enum class Fetch_Origin:char{
+        Processor,
+        Write_Routine
+    };
+
     //Level Configurations
     struct Level_config{
         int set_size;
@@ -46,6 +52,7 @@ namespace Cache_types{
         int num_blocks;
         Mapping_Technique mapping_Tech;
         Replacement_Policy replacement_Pol;
+        Write_Strategy write_Strat;
     };
 }
 #endif

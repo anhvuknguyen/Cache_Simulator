@@ -82,20 +82,31 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
 }
 
 //Constructor
-Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech, Replacement_Policy repPolicy) : hit_Count(0), miss_Count(0), compulsory_Miss_Count(0), capacity_Miss_Count(0), conflict_Miss_Count(0) {
+Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech, Replacement_Policy repPolicy, Write_Strategy writeStrat){
 
     //Validate Inputs:
     validateInput(setSize,numSets,numBlocks,mapTech,repPolicy);
     
     mapping_Technique = mapTech;
     replacement_Policy = repPolicy;
+    write_Strategy = writeStrat;
 
     cache_Size = setSize * numSets * numBlocks;
     num_Lines = setSize * numSets;
     num_Sets = numSets;
     num_Blocks = numBlocks;
     eviction_Count = 0;
-    accesses = 0;
+    
+    reads = 0;
+    writes = 0;
+    read_hit_Count=0;
+    read_miss_Count=0;
+    write_hit_Count=0;
+    write_miss_Count=0;
+    writes_to_next_level=0;
+    compulsory_Miss_Count=0;
+    capacity_Miss_Count=0;
+    conflict_Miss_Count=0;
 
     num_OffsetBits = log2(numBlocks);
     num_IndexBits = log2(numSets);
@@ -138,20 +149,28 @@ string Cache::getStats(){
     //     "\n\t       Index Bits: " + to_string(num_IndexBits) +
     //     "\n\t      Offset Bits: " + to_string(num_OffsetBits) +
     //     "\n";
-    str += "Cache Stats: \n\t             Hits: " + to_string(hit_Count) +
+    str += "Cache Stats: \n\t             Hits: " + to_string(read_hit_Count+write_hit_Count) +
         "\n\tCompulsory Misses: " + to_string(compulsory_Miss_Count) +
         "\n\t  Conflict Misses: " + to_string(conflict_Miss_Count) +
         "\n\t  Capacity Misses: " + to_string(capacity_Miss_Count) +
-        "\n\t     Total Misses: " + to_string(miss_Count) +
+        "\n\t     Total Misses: " + to_string(read_miss_Count+write_hit_Count) +
         "\n\t        Evictions: " + to_string(eviction_Count) +
-        "\n\t         Accesses: " + to_string(accesses) +
+        "\n\t         Accesses: " + to_string(reads+writes) +
         "\n";
     return str;
 }
 
 //Getters
-int Cache::getHits(){
-    return hit_Count;
+int Cache::getReadHits(){
+    return read_hit_Count;
+}
+
+int Cache::getWriteHits(){
+    return write_hit_Count;
+}
+
+Cache_types::Write_Strategy Cache::getWriteStrat(){
+    return write_Strategy;
 }
 
 //Functions
@@ -184,7 +203,16 @@ int Cache::belady_loadFile(string traceFile){
     return 1;
 }
 
-//Access Helper Functions (Also helper functions for hierachy)
+//Only runs after the line is brought into the cache level
+void Cache::setDirtyBit(int index, int tag){
+    cacheArr.at(index)->set_DirtyBit(tag);
+}
+
+//Access Helper Functions For Hierarchy
+Miss_Type Cache::levelContains(int index, int tag){
+    return cacheArr[index]->contains(tag);
+}
+
 Miss_Type Cache::levelLookup(int index, int tag){
     return cacheArr[index]->lookup(tag);
 }
@@ -210,54 +238,29 @@ Miss_Type Cache::insertToShadowCache(unsigned int address){
     return shadowMiss_T;
 }
 
-void Cache::incrementHit(){
-    hit_Count++;
+void Cache::incrementReads(){
+    reads++;
 }
-
-void Cache::incrementMiss(){
-    miss_Count++;
+void Cache::incrementWrites(){
+    writes++;
 }
-
-void Cache::incrementAccesses(){
-    accesses++;
+void Cache::incrementReadHit(){
+    read_hit_Count++;
 }
-
+void Cache::incrementWriteHit(){
+    write_hit_Count++;
+}
+void Cache::incrementReadMiss(){
+    read_miss_Count++;
+}
+void Cache::incrementWriteMiss(){
+    write_miss_Count++;
+}
+void Cache::incrementWritesToNextLevel(){
+    writes_to_next_level++;
+}
 bool Cache::indexIsFull(int index){
     return cacheArr[index]->isFull();
-}
-
-int Cache::access(Cache_types::Operation op, unsigned int address){
-    accesses++;
-    int offset, index, tag;
-    decompose(address, offset,index,tag);
-    
-    if(op==Operation::Read){
-        //Handle shadowCache
-        int blockNumber = address >> num_OffsetBits;
-        Miss_Type shadowMiss_T = shadowCache->lookup(blockNumber);
-        if(shadowMiss_T==Miss_Type::Miss){
-            if(shadowCache->isFull()){
-                shadowCache->evict();
-            }
-            shadowCache->insert(blockNumber);
-        }
-        //Handle cacheArr
-        Miss_Type miss_T = levelLookup(index,tag);
-        if(miss_T==Miss_Type::Hit){
-            cout << "Hit" << endl;
-            hit_Count++;
-            return 1;
-        }
-        else if(miss_T==Miss_Type::Miss){
-            miss_Count++;
-            classifyMiss(address, shadowMiss_T);
-            if(cacheArr[index]->isFull()){
-                levelEvict(index);
-            }
-            levelInsert(index,tag);
-        }
-    }
-    return -1;
 }
 
 //Classify Miss
@@ -290,13 +293,16 @@ void Cache::reset(){
     for(int i=0;i<num_Sets;i++){
         cacheArr[i]->reset();
     }
-    hit_Count=0;
-    miss_Count=0;
+    read_hit_Count=0;
+    read_miss_Count=0;
+    write_hit_Count=0;
+    write_miss_Count=0;
     eviction_Count=0;
     compulsory_Miss_Count=0;
     capacity_Miss_Count=0;
     conflict_Miss_Count=0;
-    accesses=0;
+    reads=0;
+    writes=0;
 
     blockSet.clear();
     shadowCache->reset();

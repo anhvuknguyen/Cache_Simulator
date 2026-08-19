@@ -11,7 +11,7 @@ using namespace std;
 using namespace Cache_types;
 
 LIFO_Cache_set::LIFO_Cache_set(int setSize, Replacement_Policy repPolicy) : Cache_set(setSize,repPolicy){
-    lineStack = new stack<Cache_line>();
+    lineStack = new stack<int>();
     lineMap = new unordered_map<int,Cache_line>();
 }
 
@@ -24,13 +24,25 @@ string LIFO_Cache_set::toString(){
     return toString_Tool(*lineStack);
 }
 
-string LIFO_Cache_set::toString_Tool(std::stack<Cache_line> copy){
+string LIFO_Cache_set::toString_Tool(std::stack<int> copy){
     string str;
     while(!copy.empty()){
-        str+=copy.top().toString() + "\n";
+        str+=lineMap->at(copy.top()).toString() + "\n";
         copy.pop();
     }
     return str;
+}
+
+void LIFO_Cache_set::set_DirtyBit(int tag){
+    lineMap->at(tag).setDirtyBit(1);
+}
+
+void LIFO_Cache_set::clear_DirtyBit(int tag){
+    lineMap->at(tag).setDirtyBit(0);
+}
+
+Miss_Type LIFO_Cache_set::contains(int tag){
+    return lookup(tag);
 }
 
 Miss_Type LIFO_Cache_set::lookup(int tag){
@@ -47,8 +59,8 @@ int LIFO_Cache_set::evict(){
     if(isFull()){
         decrementCapacity();
         incrementEvictions();
-        int tag = lineStack->top().getTag();
-        int dirtyBit = lineStack->top().getDirtyBit();
+        int tag = lineStack->top();
+        int dirtyBit = lineMap->at(tag).getDirtyBit();
         lineStack->pop();
         lineMap->erase(tag);
         return dirtyBit;
@@ -63,8 +75,8 @@ int LIFO_Cache_set::insert(int tag){
         return -1;
     }
     incrementCapacity();
-    lineStack->emplace(tag,true,false);
-    lineMap->insert({tag,lineStack->top()});
+    lineStack->emplace(tag);
+    lineMap->insert({tag,Cache_line(tag,true,false)});
     return 1;
 }
 
