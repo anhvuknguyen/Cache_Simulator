@@ -57,17 +57,18 @@ Cache_types::Miss_Type Random_Cache_set::lookup(int tag){
     return Miss_Type::Miss;
 }
 
-int Random_Cache_set::evict(){
+Cache_types::Evict_Return_T Random_Cache_set::evict(){
     if(isFull()){
         decrementCapacity();
         incrementEvictions();
         int index = rand() % get_set_Size();
+        int tag = lineArr->at(index).getTag();
         int dirtyBit = lineArr->at(index).getDirtyBit();
         lineArr->erase(lineArr->begin() + index);
-        return dirtyBit;
+        return {tag,dirtyBit};
     }
     else{
-        return -1;
+        return {-1,-1};
     }
 }
 

@@ -55,7 +55,7 @@ Miss_Type FIFO_Cache_set::lookup(int tag){
     }
 }
 
-int FIFO_Cache_set::evict(){
+Cache_types::Evict_Return_T FIFO_Cache_set::evict(){
     if(isFull()){
         decrementCapacity();
         incrementEvictions();
@@ -64,10 +64,10 @@ int FIFO_Cache_set::evict(){
 
         lineQueue->pop();
         lineMap->erase(tag);
-        return dirtyBit;
+        return {tag,dirtyBit};
     }
     else{
-        return -1;
+        return {-1,-1};
     }
 }
 

@@ -62,7 +62,7 @@ Cache_types::Miss_Type LFU_Cache_set::lookup(int tag){
     }
 }
 
-int LFU_Cache_set::evict(){
+Cache_types::Evict_Return_T LFU_Cache_set::evict(){
     if(isFull()){
         auto it = lineList->rbegin();
         int lowestFreq = numeric_limits<int>::max();
@@ -77,17 +77,17 @@ int LFU_Cache_set::evict(){
             it++;
         }
         if(tag==-1){
-            return -1;
+            return {-1,-1};
         }
         int dirtyBit = (*lineMap).at(tag).second->getDirtyBit();
         lineList->erase((*lineMap).at(tag).second);
         lineMap->erase(tag);
         decrementCapacity();
         incrementEvictions();
-        return dirtyBit;
+        return {tag,dirtyBit};
     }
     else{
-        return -1;
+        return {-1,-1};
     }
 }
 

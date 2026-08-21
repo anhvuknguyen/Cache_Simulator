@@ -21,6 +21,8 @@ private:
     //Recursive Functions
     void read(int level, unsigned int address);
     void write(int level, unsigned int address);
+    void writeback(int level, unsigned int address);
+    void installAt(int level, int index, int tag);
 public:
     Cache_hierarchy(int num_caches, std::vector<Cache_types::Level_config> level_config_v_in);
     int belady_loadFile(std::string traceFile);

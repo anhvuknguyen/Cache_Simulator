@@ -9,6 +9,7 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 using namespace Cache_utils;
@@ -52,25 +53,19 @@ void Cache_hierarchy::read(int level, unsigned int address){
     Miss_Type miss_T = hierarchy.at(level)->levelLookup(index, tag);
     hierarchy.at(level)->incrementReads();
     if(miss_T==Miss_Type::Miss){
-        cout << "Miss in L["+to_string(level+1)+"]" << endl;
+        cout << "Read Miss in L["+to_string(level+1)+"]" << endl;
         hierarchy.at(level)->incrementReadMiss();
         hierarchy.at(level)->classifyMiss(address,shadowMiss);
         read(level+1,address);
     }
     else if(miss_T==Miss_Type::Hit){
-        cout << "Hit in L["+to_string(level+1)+"]" << endl;
+        cout << "Read Hit in L["+to_string(level+1)+"]" << endl;
         hierarchy.at(level)->incrementReadHit();
         return;
     }
 
     //After we miss, insert (evict if needed)
-    if(hierarchy.at(level)->indexIsFull(index)){
-        int dirty = hierarchy.at(level)->levelEvict(index);
-        if(dirty==1){
-            write(level+1,address);
-        }
-    }
-    hierarchy.at(level)->levelInsert(index,tag);
+    installAt(level,index,tag);
 }
 
 void Cache_hierarchy::write(int level, unsigned int address){
@@ -82,22 +77,83 @@ void Cache_hierarchy::write(int level, unsigned int address){
 
     int offset, index, tag;
     hierarchy.at(level)->decompose(address,offset,index,tag);
+    Miss_Type shadowMiss = hierarchy.at(level)->insertToShadowCache(address);
     Miss_Type miss_T = hierarchy.at(level)->levelContains(index, tag);
+    hierarchy.at(level)->incrementWrites();
     if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Back_Write_Allocate){
         if(miss_T==Miss_Type::Miss){
-            read(level,address);
+            cout << "Write Miss in L["+to_string(level+1)+"]" << endl;
+            hierarchy.at(level)->incrementWriteMiss();
+            hierarchy.at(level)->classifyMiss(address,shadowMiss);
+            read(level+1,address);
+            //Evict & Insert
+            installAt(level,index,tag);
+        }
+        else if(miss_T==Miss_Type::Hit){
+            hierarchy.at(level)->incrementWriteHit();
+            cout << "Write Hit in L["+to_string(level+1)+"]" << endl;
         }
         hierarchy.at(level)->setDirtyBit(index,tag);
         cout << "Wrote in L["+to_string(level+1)+"]" << endl;
-        hierarchy.at(level)->incrementWrites();
+    }
+    else if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Through_No_Write_Allocate){
+        if(miss_T==Miss_Type::Hit){
+            hierarchy.at(level)->incrementWriteHit();
+            cout << "Wrote in L["+to_string(level+1)+"]" << endl;
+        }
+        else if(miss_T==Miss_Type::Miss){
+            hierarchy.at(level)->incrementWriteMiss();
+            hierarchy.at(level)->classifyMiss(address,shadowMiss);
+            cout << "Write Miss in L["+to_string(level+1)+"]" << endl;
+        }
+        write(level+1,address);
+    }
+}
+
+void Cache_hierarchy::writeback(int level, unsigned int address){
+    //Base Case
+    if(level==hierarchy_size){
+        memory_writes++;
+        return;
+    }
+    assert(hierarchy.at(level)->getReplacementPolicy() != Replacement_Policy::Belady);
+
+    int offset, index, tag;
+    hierarchy.at(level)->decompose(address,offset,index,tag);
+    hierarchy.at(level)->incrementWritebacksReceived();
+    Miss_Type miss_T = hierarchy.at(level)->levelContains(index, tag);
+
+    if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Back_Write_Allocate){
+        if(miss_T==Miss_Type::Miss){
+            cout << "Writeback Miss in L["+to_string(level+1)+"]" << endl;
+            //Evict & Insert
+            installAt(level,index,tag);
+        }
+        else if(miss_T==Miss_Type::Hit){
+            cout << "Writeback Hit in L["+to_string(level+1)+"]" << endl;
+        }
+        hierarchy.at(level)->setDirtyBit(index,tag);
+        cout << "Wrote in L["+to_string(level+1)+"]" << endl;
     }
     else if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Through_No_Write_Allocate){
         if(miss_T==Miss_Type::Hit){
             cout << "Wrote in L["+to_string(level+1)+"]" << endl;
-            hierarchy.at(level)->incrementWrites();
         }
-        write(level+1,address);
+        writeback(level+1,address);
     }
+}
+
+void Cache_hierarchy::installAt(int level, int index, int tag){
+    if(hierarchy.at(level)->indexIsFull(index)){
+        Evict_Return_T eviction_return = hierarchy.at(level)->levelEvict(index);
+        if(eviction_return.dirtyBit==1){
+            unsigned int w_address = 0;
+            hierarchy.at(level)->recompose(w_address,index,eviction_return.tag);
+            assert(!(hierarchy.at(level)->getWriteStrat() == Write_Strategy::Write_Through_No_Write_Allocate && eviction_return.dirtyBit == 1));
+            writeback(level+1,w_address);
+        }
+    }
+    hierarchy.at(level)->levelInsert(index,tag);
 }
 
 int Cache_hierarchy::access(Operation op, unsigned int address){
@@ -125,17 +181,59 @@ std::string Cache_hierarchy::viewCache(){
 
 std::string Cache_hierarchy::getStats(){
     string str;
+    vector<Cache_level_stats> stats_v;
     for(int i=0;i<hierarchy_size;i++){
-        str+="L["+to_string(i+1)+"]:\n";
-        str+=hierarchy.at(i)->getStats();
+        stats_v.push_back(hierarchy.at(i)->getStats());
+    }
+    str+="Cache Stats:\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="L["+to_string(i+1)+"]\t\t\t\t";
     }
     str+="\n";
     for(int i=0;i<hierarchy_size;i++){
-        str+="L["+to_string(i+1)+"] Hits: ";
-        str+=to_string(hierarchy.at(i)->getReadHits() + hierarchy.at(i)->getWriteHits())+"\n";
+        str+="        Total Reads: "+to_string(stats_v.at(i).reads)+"\t\t";
     }
-    str+="Total Memory Reads: "+to_string(memory_reads)+"\n";
-    str+="Total Memory Writes: "+to_string(memory_writes)+"\n";
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="          Read Hits: "+to_string(stats_v.at(i).read_hit_Count)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="        Read Misses: "+to_string(stats_v.at(i).read_miss_Count)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="       Total Writes: "+to_string(stats_v.at(i).writes)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="         Write Hits: "+to_string(stats_v.at(i).write_hit_Count)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="       Write Misses: "+to_string(stats_v.at(i).write_miss_Count)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="Writebacks Received: "+to_string(stats_v.at(i).writebacks_received)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="          Evictions: "+to_string(stats_v.at(i).eviction_Count)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="  Compulsory Misses: "+to_string(stats_v.at(i).compulsory_Miss_Count)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="    Conflict Misses: "+to_string(stats_v.at(i).conflict_Miss_Count)+"\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="    Capacity Misses: "+to_string(stats_v.at(i).capacity_Miss_Count)+"\t\t";
+    }
+    str+="\n";
     return str;
 }
 

@@ -18,7 +18,7 @@ public:
 
     Cache_types::Miss_Type contains(int tag) override;
     Cache_types::Miss_Type lookup(int tag) override;
-    int evict() override;
+    Cache_types::Evict_Return_T evict() override;
     int insert(int tag) override;
     void reset() override;
 };

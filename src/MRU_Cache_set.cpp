@@ -59,7 +59,7 @@ Miss_Type MRU_Cache_set::lookup(int tag){
     }
 }
 
-int MRU_Cache_set::evict(){
+Cache_types::Evict_Return_T MRU_Cache_set::evict(){
     if(isFull()){
         decrementCapacity();
         incrementEvictions();
@@ -67,10 +67,10 @@ int MRU_Cache_set::evict(){
         int dirtyBit = lineList->front().getDirtyBit();
         lineList->pop_front();
         lineMap->erase(tag);
-        return dirtyBit;
+        return {tag,dirtyBit};
     }
     else{
-        return -1;
+        return {-1,-1};
     }
 }
 

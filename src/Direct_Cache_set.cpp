@@ -42,17 +42,18 @@ Miss_Type Direct_Cache_set::lookup(int tag){
     }
 }
 
-int Direct_Cache_set::evict(){
+Cache_types::Evict_Return_T Direct_Cache_set::evict(){
     if(isFull()){
+        int tag = line->getTag();
         int dirtyBit = line->getDirtyBit();
         
         line->fill(0, 0, 0);
         incrementEvictions();
         decrementCapacity();
-        return dirtyBit;
+        return {tag,dirtyBit};
     } 
     else{
-        return -1;
+        return {-1,-1};
     }
 }
 

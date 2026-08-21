@@ -30,7 +30,8 @@ namespace Cache_types{
     //Cache Miss Types
     enum class Miss_Type:char{
         Hit,
-        Miss
+        Miss,
+        null
     };
 
     //Operation
@@ -53,6 +54,27 @@ namespace Cache_types{
         Mapping_Technique mapping_Tech;
         Replacement_Policy replacement_Pol;
         Write_Strategy write_Strat;
+    };
+
+    //Eviction Return Type
+    struct Evict_Return_T{
+        int tag;
+        int dirtyBit;
+    };
+
+    //Cache Level Stats
+    struct Cache_level_stats{
+        int reads;
+        int read_hit_Count;
+        int read_miss_Count;
+        int writes;
+        int write_hit_Count;
+        int write_miss_Count;
+        int writebacks_received;
+        int eviction_Count;
+        int compulsory_Miss_Count;
+        int capacity_Miss_Count;
+        int conflict_Miss_Count;
     };
 }
 #endif

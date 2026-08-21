@@ -80,7 +80,7 @@ Miss_Type Belady_Cache_set::lookup(int tag){
     }
 }
 
-int Belady_Cache_set::evict(){
+Cache_types::Evict_Return_T Belady_Cache_set::evict(){
     if(isFull()){
         list<int> inCache;
         for(Cache_line& line : *lineList){
@@ -102,16 +102,17 @@ int Belady_Cache_set::evict(){
             }
         }
         
+        int tag = lineMap->at(inCache.back())->getDirtyBit();
         int dirtyBit = lineMap->at(inCache.back())->getDirtyBit();
 
         lineList->erase(lineMap->at(inCache.back()));
         lineMap->erase(inCache.back());
         decrementCapacity();
         incrementEvictions();
-        return dirtyBit;
+        return {tag,dirtyBit};
     }
     else{
-        return -1;
+        return {-1,-1};
     }
 }
 

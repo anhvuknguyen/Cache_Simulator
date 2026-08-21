@@ -25,14 +25,13 @@ private:
 
     //Cache Stats
     int reads;
-    int writes;
     int read_hit_Count;
     int read_miss_Count;
+    int writes;
     int write_hit_Count;
     int write_miss_Count;
-    int writes_to_next_level;
+    int writebacks_received;
     int eviction_Count;
-
     int compulsory_Miss_Count;
     int capacity_Miss_Count;
     int conflict_Miss_Count;
@@ -51,29 +50,34 @@ public:
     ~Cache();
     std::string viewCache();
     std::string viewShadowCache();
-    std::string getStats();
+    Cache_types::Cache_level_stats getStats();
+
     int getReadHits();
     int getWriteHits();
     Cache_types::Write_Strategy getWriteStrat();
+    Cache_types::Replacement_Policy getReplacementPolicy();
+
     void decompose(unsigned int address, int& offset, int& index, int& tag);
+    void recompose(unsigned int& address, int index, int tag);
     int belady_loadFile(std::string traceFile);
     void setDirtyBit(int index,int tag);
 
     Cache_types::Miss_Type levelContains(int index,int tag);
     Cache_types::Miss_Type levelLookup(int index, int tag);
-    int levelEvict(int index);
+    Cache_types::Evict_Return_T levelEvict(int index);
     void levelInsert(int index, int tag);
     Cache_types::Miss_Type insertToShadowCache(unsigned int address);
+
     void incrementReads();
     void incrementWrites();
     void incrementReadHit();
     void incrementReadMiss();
     void incrementWriteHit();
     void incrementWriteMiss();
-    void incrementWritesToNextLevel();
+    void incrementWritebacksReceived();
+
     void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
     bool indexIsFull(int index);
-
     void reset();
 };
 

@@ -103,7 +103,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     read_miss_Count=0;
     write_hit_Count=0;
     write_miss_Count=0;
-    writes_to_next_level=0;
+    writebacks_received=0;
     compulsory_Miss_Count=0;
     capacity_Miss_Count=0;
     conflict_Miss_Count=0;
@@ -141,36 +141,35 @@ string Cache::viewShadowCache(){
     return shadowCache->toString();
 }
 
-string Cache::getStats(){
-    string str;
-    // str += "Cache: \n\t             Size: " + to_string(cache_Size)  +
-    //     "\n\t    Num. of Lines: " + to_string(num_Lines) +
-    //     "\n\t         Tag Bits: " + to_string(num_TagBits) +
-    //     "\n\t       Index Bits: " + to_string(num_IndexBits) +
-    //     "\n\t      Offset Bits: " + to_string(num_OffsetBits) +
-    //     "\n";
-    str += "Cache Stats: \n\t             Hits: " + to_string(read_hit_Count+write_hit_Count) +
-        "\n\tCompulsory Misses: " + to_string(compulsory_Miss_Count) +
-        "\n\t  Conflict Misses: " + to_string(conflict_Miss_Count) +
-        "\n\t  Capacity Misses: " + to_string(capacity_Miss_Count) +
-        "\n\t     Total Misses: " + to_string(read_miss_Count+write_hit_Count) +
-        "\n\t        Evictions: " + to_string(eviction_Count) +
-        "\n\t         Accesses: " + to_string(reads+writes) +
-        "\n";
-    return str;
+Cache_level_stats Cache::getStats(){
+    Cache_level_stats x;
+    x.reads = reads;
+    x.read_hit_Count = read_hit_Count;
+    x.read_miss_Count = read_miss_Count;
+    x.writes = writes;
+    x.write_hit_Count = write_hit_Count;
+    x.write_miss_Count = write_miss_Count;
+    x.writebacks_received = writebacks_received;
+    x.eviction_Count = eviction_Count;
+    x.compulsory_Miss_Count = compulsory_Miss_Count;
+    x.capacity_Miss_Count = capacity_Miss_Count;
+    x.conflict_Miss_Count = conflict_Miss_Count;
+
+    return x;
 }
 
 //Getters
 int Cache::getReadHits(){
     return read_hit_Count;
 }
-
 int Cache::getWriteHits(){
     return write_hit_Count;
 }
-
-Cache_types::Write_Strategy Cache::getWriteStrat(){
+Write_Strategy Cache::getWriteStrat(){
     return write_Strategy;
+}
+Replacement_Policy Cache::getReplacementPolicy(){
+    return replacement_Policy;
 }
 
 //Functions
@@ -178,6 +177,13 @@ void Cache::decompose(unsigned int address, int &offset, int &index, int &tag){
     offset = address & ((1<<num_OffsetBits)-1);
     index = (address >> num_OffsetBits) & ((1<<num_IndexBits)-1);
     tag = (address >> (num_OffsetBits+num_IndexBits)) & ((1<<num_TagBits)-1);
+}
+
+void Cache::recompose(unsigned int &address, int index, int tag){
+    address = tag;
+    address <<= num_IndexBits;
+    address += index;
+    address <<= num_OffsetBits;
 }
 
 int Cache::belady_loadFile(string traceFile){
@@ -217,7 +223,7 @@ Miss_Type Cache::levelLookup(int index, int tag){
     return cacheArr[index]->lookup(tag);
 }
 
-int Cache::levelEvict(int index){
+Cache_types::Evict_Return_T Cache::levelEvict(int index){
     eviction_Count++;
     return cacheArr[index]->evict();
 }
@@ -256,8 +262,8 @@ void Cache::incrementReadMiss(){
 void Cache::incrementWriteMiss(){
     write_miss_Count++;
 }
-void Cache::incrementWritesToNextLevel(){
-    writes_to_next_level++;
+void Cache::incrementWritebacksReceived(){
+    writebacks_received++;
 }
 bool Cache::indexIsFull(int index){
     return cacheArr[index]->isFull();
@@ -297,6 +303,7 @@ void Cache::reset(){
     read_miss_Count=0;
     write_hit_Count=0;
     write_miss_Count=0;
+    writebacks_received=0;
     eviction_Count=0;
     compulsory_Miss_Count=0;
     capacity_Miss_Count=0;
