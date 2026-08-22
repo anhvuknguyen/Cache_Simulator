@@ -208,17 +208,19 @@ int Cache::belady_loadFile(string traceFile){
     }
     return 1;
 }
-
+int Cache::belady_advanceFile(int index){
+    if(replacement_Policy!=Replacement_Policy::Belady){
+        return -1;
+    }
+    cacheArr.at(index)->advanceTraceList();
+    return 1;
+}
 //Only runs after the line is brought into the cache level
 void Cache::setDirtyBit(int index, int tag){
     cacheArr.at(index)->set_DirtyBit(tag);
 }
 
-//Access Helper Functions For Hierarchy
-Miss_Type Cache::levelContains(int index, int tag){
-    return cacheArr[index]->contains(tag);
-}
-
+//Access Helper Functions
 Miss_Type Cache::levelLookup(int index, int tag){
     return cacheArr[index]->lookup(tag);
 }

@@ -78,7 +78,7 @@ void Cache_hierarchy::write(int level, unsigned int address){
     int offset, index, tag;
     hierarchy.at(level)->decompose(address,offset,index,tag);
     Miss_Type shadowMiss = hierarchy.at(level)->insertToShadowCache(address);
-    Miss_Type miss_T = hierarchy.at(level)->levelContains(index, tag);
+    Miss_Type miss_T = hierarchy.at(level)->levelLookup(index, tag);
     hierarchy.at(level)->incrementWrites();
     if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Back_Write_Allocate){
         if(miss_T==Miss_Type::Miss){
@@ -121,7 +121,7 @@ void Cache_hierarchy::writeback(int level, unsigned int address){
     int offset, index, tag;
     hierarchy.at(level)->decompose(address,offset,index,tag);
     hierarchy.at(level)->incrementWritebacksReceived();
-    Miss_Type miss_T = hierarchy.at(level)->levelContains(index, tag);
+    Miss_Type miss_T = hierarchy.at(level)->levelLookup(index, tag);
 
     if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Back_Write_Allocate){
         if(miss_T==Miss_Type::Miss){
@@ -157,6 +157,12 @@ void Cache_hierarchy::installAt(int level, int index, int tag){
 }
 
 int Cache_hierarchy::access(Operation op, unsigned int address){
+    int offset,index,tag;
+    hierarchy.at(0)->decompose(address,offset,index,tag);
+    cout<< "Tag: " + to_string(tag) + " Index: " + to_string(index) << endl;
+    if(hierarchy_size==1 && hierarchy.at(0)->getReplacementPolicy()==Replacement_Policy::Belady){
+        hierarchy.at(0)->belady_advanceFile(index);
+    }
     if(op==Operation::Read){
         read(0,address);
         cout << "" << endl;
@@ -233,6 +239,10 @@ std::string Cache_hierarchy::getStats(){
     for(int i=0;i<hierarchy_size;i++){
         str+="    Capacity Misses: "+to_string(stats_v.at(i).capacity_Miss_Count)+"\t\t";
     }
+    str+="\n";
+
+    str+="\nMemory  Reads: "+to_string(memory_reads);
+    str+="\nMemory Writes: "+to_string(memory_writes);
     str+="\n";
     return str;
 }

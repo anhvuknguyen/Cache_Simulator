@@ -59,10 +59,12 @@ public:
 
     void decompose(unsigned int address, int& offset, int& index, int& tag);
     void recompose(unsigned int& address, int index, int tag);
-    int belady_loadFile(std::string traceFile);
     void setDirtyBit(int index,int tag);
 
-    Cache_types::Miss_Type levelContains(int index,int tag);
+    //Belady Tools
+    int belady_loadFile(std::string traceFile);
+    int belady_advanceFile(int index);
+
     Cache_types::Miss_Type levelLookup(int index, int tag);
     Cache_types::Evict_Return_T levelEvict(int index);
     void levelInsert(int index, int tag);

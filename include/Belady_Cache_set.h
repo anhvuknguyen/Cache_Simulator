@@ -24,9 +24,9 @@ public:
     void clear_DirtyBit(int tag) override;
 
     void addFutureTag(Cache_types::Operation op, int tag) override;
+    void advanceTraceList() override;
     void resetTraceList() override;
 
-    Cache_types::Miss_Type contains(int tag) override;
     Cache_types::Miss_Type lookup(int tag) override;
     Cache_types::Evict_Return_T evict() override;
     int insert(int tag) override;

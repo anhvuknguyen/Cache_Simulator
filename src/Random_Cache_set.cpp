@@ -43,10 +43,6 @@ void Random_Cache_set::clear_DirtyBit(int tag){
     }
 }
 
-Miss_Type Random_Cache_set::contains(int tag){
-    return lookup(tag);
-}
-
 Cache_types::Miss_Type Random_Cache_set::lookup(int tag){
     if(lineArr->empty())return Miss_Type::Miss;
     for(int i=0;i<((int)lineArr->size());i++){

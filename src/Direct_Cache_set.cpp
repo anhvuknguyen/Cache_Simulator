@@ -29,10 +29,6 @@ void Direct_Cache_set::clear_DirtyBit(int tag){
     line->setDirtyBit(0);
 }
 
-Miss_Type Direct_Cache_set::contains(int tag){
-    return lookup(tag);
-}
-
 Miss_Type Direct_Cache_set::lookup(int tag){
     if(line->getTag() == tag && line->getValidBit()==1){
         return Miss_Type::Hit;

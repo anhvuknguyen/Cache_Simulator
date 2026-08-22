@@ -99,6 +99,19 @@ Cache_hierarchy* buildCacheHierarchy(){
             cfg.num_sets=numSets;
             cfg.set_size=setSize;
             cfg.replacement_Pol=repPolicy;
+            do{
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Choose a write strategy for L["+to_string(j+1)+"]: " << endl;
+                for(int i=0;i<WRITESTRAT_size;i++){
+                    cout << "[" + to_string(i) + "] " + WRITESTRAT_strings[i] + "\n";
+                }
+                cout << ">> ";
+                cin >> writeStrat_index;
+
+            }while(!(writeStrat_index>-1 && writeStrat_index<WRITESTRAT_size && !cin.fail()));
+            writeStrat = WRITESTRAT[writeStrat_index];
+            cfg.write_Strat = writeStrat;
             level_config_v.push_back(cfg);
             continue;
         }

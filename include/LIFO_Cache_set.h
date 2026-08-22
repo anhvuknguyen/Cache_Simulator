@@ -20,7 +20,6 @@ public:
     void set_DirtyBit(int tag) override;
     void clear_DirtyBit(int tag) override;
 
-    Cache_types::Miss_Type contains(int tag) override;
     Cache_types::Miss_Type lookup(int tag) override;
     Cache_types::Evict_Return_T evict() override;
     int insert(int tag) override;

@@ -37,16 +37,6 @@ void LRU_Cache_set::clear_DirtyBit(int tag){
     lineMap->at(tag)->setDirtyBit(0);
 }
 
-Miss_Type LRU_Cache_set::contains(int tag){
-    auto targetIt = lineMap->find(tag);
-    if(targetIt==lineMap->end()){
-        return Miss_Type::Miss;
-    }
-    else{
-        return Miss_Type::Hit;
-    }
-}
-
 Miss_Type LRU_Cache_set::lookup(int tag){
     auto targetIt = lineMap->find(tag);
     if(targetIt==lineMap->end()){
