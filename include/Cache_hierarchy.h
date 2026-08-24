@@ -31,6 +31,7 @@ public:
     std::string viewCache();
     std::string getDetails();
     void reset();
+    void checkInvariants(int trace_read_count, int trace_write_count) const;
 };
 
 #endif

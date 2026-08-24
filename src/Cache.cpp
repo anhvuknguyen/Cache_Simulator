@@ -183,7 +183,7 @@ int Cache::getReadHits(){
 int Cache::getWriteHits(){
     return write_hit_Count;
 }
-Write_Strategy Cache::getWriteStrat(){
+Write_Strategy Cache::getWriteStrat() const{
     return write_Strategy;
 }
 Replacement_Policy Cache::getReplacementPolicy(){
@@ -287,6 +287,28 @@ void Cache::incrementWritebacksReceived(){
 }
 bool Cache::indexIsFull(int index){
     return cacheArr[index]->isFull();
+}
+
+int Cache::getCompulsoryMisses() const{
+    return compulsory_Miss_Count;
+}
+int Cache::getConflictMisses()const{
+    return conflict_Miss_Count;
+}
+int Cache::getCapacityMisses()const{
+    return capacity_Miss_Count;
+}
+int Cache::getReadMisses()const{
+    return read_miss_Count;
+}
+int Cache::getWriteMisses()const{
+    return write_miss_Count;
+}
+int Cache::getReads()const{
+    return reads;
+}
+int Cache::getWrites()const{
+    return writes;
 }
 
 //Classify Miss

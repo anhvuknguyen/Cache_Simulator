@@ -56,7 +56,7 @@ public:
 
     int getReadHits();
     int getWriteHits();
-    Cache_types::Write_Strategy getWriteStrat();
+    Cache_types::Write_Strategy getWriteStrat() const;
     Cache_types::Replacement_Policy getReplacementPolicy();
 
     void decompose(unsigned int address, int& offset, int& index, int& tag);
@@ -79,6 +79,15 @@ public:
     void incrementWriteHit();
     void incrementWriteMiss();
     void incrementWritebacksReceived();
+
+    int getCompulsoryMisses() const;
+    int getConflictMisses() const;
+    int getCapacityMisses() const;
+    int getReadMisses() const;
+    int getWriteMisses() const;
+    int getReads() const;
+    int getWrites() const;
+
 
     void classifyMiss(unsigned int address, Cache_types::Miss_Type shadowMiss_T);
     bool indexIsFull(int index);

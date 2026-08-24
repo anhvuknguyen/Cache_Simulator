@@ -38,12 +38,17 @@ Cache_hierarchy *cache_h = NULL;
 //Trace Directory
 string trace_directory = "./traces";
 
+int num_Writes=0;
+int num_Reads=0;
+
 Cache_hierarchy* buildCacheHierarchy(){
     if(cache_h!=NULL){
         cout << "\nMust clear existing cache hierarchy first!\n" << endl;
         return cache_h;
     }
 
+    num_Writes=0;
+    num_Reads=0;
     do{
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -267,9 +272,16 @@ void runTrace(){
         file >> operation >> std::hex >> address;
         cout << operation + " " + to_string(address) << endl;
         Operation op = (operation=="R")? Operation::Read : Operation::Write;
+        if(op==Operation::Read){
+            num_Reads++;
+        }
+        else{
+            num_Writes++;
+        }
         cache_h->access(op,address);
     }
     cout << cache_h->getStats() << endl;
+    cache_h->checkInvariants(num_Reads,num_Writes);
 }
 
 void deleteCacheHierarchy(){
@@ -277,6 +289,8 @@ void deleteCacheHierarchy(){
     hierarchy_size=-1;
     level_config_v.clear();
     cache_h=NULL;
+    num_Writes=0;
+    num_Reads=0;
 }
 
 void viewCacheHierarchy(){
@@ -293,6 +307,8 @@ void viewCacheHierarchyDetails(){
 
 void resetCacheHierarchy(){
     cache_h->reset();
+    num_Writes=0;
+    num_Reads=0;
 }
 
 int main() {

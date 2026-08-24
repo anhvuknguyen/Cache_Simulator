@@ -9,6 +9,9 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <algorithm>
 #include <cassert>
 
 using namespace std;
@@ -199,65 +202,58 @@ std::string Cache_hierarchy::viewCache(){
 }
 
 std::string Cache_hierarchy::getStats(){
-    string str;
-    vector<Cache_level_stats> stats_v;
+    std::vector<Cache_level_stats> stats_v;
     for(int i=0;i<hierarchy_size;i++){
         stats_v.push_back(hierarchy.at(i)->getStats());
     }
-    str+="Cache Stats:\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="L["+to_string(i+1)+"]\t\t\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="        Total Reads: "+to_string(stats_v.at(i).reads)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="          Read Hits: "+to_string(stats_v.at(i).read_hit_Count)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="        Read Misses: "+to_string(stats_v.at(i).read_miss_Count)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="       Total Writes: "+to_string(stats_v.at(i).writes)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="         Write Hits: "+to_string(stats_v.at(i).write_hit_Count)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="       Write Misses: "+to_string(stats_v.at(i).write_miss_Count)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="Writebacks Received: "+to_string(stats_v.at(i).writebacks_received)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="          Evictions: "+to_string(stats_v.at(i).eviction_Count)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="  Compulsory Misses: "+to_string(stats_v.at(i).compulsory_Miss_Count)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="    Conflict Misses: "+to_string(stats_v.at(i).conflict_Miss_Count)+"\t\t";
-    }
-    str+="\n";
-    for(int i=0;i<hierarchy_size;i++){
-        str+="    Capacity Misses: "+to_string(stats_v.at(i).capacity_Miss_Count)+"\t\t";
-    }
-    str+="\n";
 
-    str+="\nMemory  Reads: "+to_string(memory_reads);
-    str+="\nMemory Writes: "+to_string(memory_writes);
-    str+="\n";
-    return str;
+    const int labelW = 20;
+    int colW = 8;
+    for(int i=0;i<hierarchy_size;i++){
+        const Cache_level_stats &s = stats_v.at(i);
+        int widest = std::max({s.reads, s.read_hit_Count, s.read_miss_Count,
+                                s.writes, s.write_hit_Count, s.write_miss_Count,
+                                s.writebacks_received, s.eviction_Count,
+                                s.compulsory_Miss_Count, s.conflict_Miss_Count,
+                                s.capacity_Miss_Count});
+        int w = static_cast<int>(std::to_string(widest).length()) + 4;
+        if(w > colW) colW = w;
+    }
+
+    std::ostringstream oss;
+
+    auto row = [&](const std::string &label, int Cache_level_stats::*field){
+        oss << std::right << std::setw(labelW) << label;
+        for(int i=0;i<hierarchy_size;i++){
+            oss << std::left << std::setw(colW) << stats_v.at(i).*field;
+        }
+        oss << "\n";
+    };
+
+    oss << "Cache Stats:\n";
+    oss << std::right << std::setw(labelW) << "";
+    for(int i=0;i<hierarchy_size;i++){
+        oss << std::left << std::setw(colW) << ("L["+std::to_string(i+1)+"]");
+    }
+    oss << "\n";
+    
+    row("Total Reads: ",         &Cache_level_stats::reads);
+    row("Read Hits: ",           &Cache_level_stats::read_hit_Count);
+    row("Read Misses: ",         &Cache_level_stats::read_miss_Count);
+    row("Total Writes: ",        &Cache_level_stats::writes);
+    row("Write Hits: ",          &Cache_level_stats::write_hit_Count);
+    row("Write Misses: ",        &Cache_level_stats::write_miss_Count);
+    row("Writebacks Given: ", &Cache_level_stats::writebacks_received);
+    row("Evictions: ",           &Cache_level_stats::eviction_Count);
+    row("Compulsory Misses: ",   &Cache_level_stats::compulsory_Miss_Count);
+    row("Conflict Misses: ",     &Cache_level_stats::conflict_Miss_Count);
+    row("Capacity Misses: ",     &Cache_level_stats::capacity_Miss_Count);
+
+    oss << "\n" << std::right << std::setw(labelW) << "Memory  Reads: "  << memory_reads;
+    oss << "\n" << std::right << std::setw(labelW) << "Memory Writes: " << memory_writes;
+    oss << "\n";
+
+    return oss.str();
 }
 
 string Cache_hierarchy::getDetails(){
@@ -383,4 +379,96 @@ void Cache_hierarchy::reset(){
     }
     memory_reads=0;
     memory_writes=0;
+}
+
+void Cache_hierarchy::checkInvariants(int trace_read_count, int trace_write_count) const{
+
+    const int total_refs = trace_read_count + trace_write_count;
+
+    // ---- Per-level: the 3Cs must account for every demand miss ----------
+    // Catches a miss path that forgets to call classifyMiss (e.g. the
+    // write-through branch), or one that classifies a non-demand access.
+    for (int n = 0; n < hierarchy_size; ++n) {
+        const Cache* L = hierarchy.at(n).get();
+        const int classified = L->getCompulsoryMisses()
+                             + L->getConflictMisses()
+                             + L->getCapacityMisses();
+        const int demand_misses = L->getReadMisses() + L->getWriteMisses();
+        assert(classified == demand_misses
+               && "3C totals do not match demand misses at this level");
+    }
+
+    // ---- L1 sees exactly the program's reference stream ------------------
+    // Write-allocate fetches descend to L2+, never re-entering L1's counters,
+    // so L1's totals must equal the trace's own line counts.
+    assert(hierarchy.at(0)->getReads()  == trace_read_count
+           && "L1 read count does not match the number of R lines in the trace");
+    assert(hierarchy.at(0)->getWrites() == trace_write_count
+           && "L1 write count does not match the number of W lines in the trace");
+
+    // ---- Demand traffic between adjacent levels --------------------------
+    // A write-back level sends write MISSES down as reads (write-allocate fetch).
+    // A write-through level sends EVERY write down as a write, hits included.
+    // Writebacks appear on neither side: they are not program references.
+    for (int n = 0; n + 1 < hierarchy_size; ++n) {
+        const Cache* upper = hierarchy.at(n).get();
+        const Cache* lower = hierarchy.at(n + 1).get();
+
+        int descending = upper->getReadMisses();
+        if (upper->getWriteStrat() == Write_Strategy::Write_Through_No_Write_Allocate)
+            descending += upper->getWrites();
+        else
+            descending += upper->getWriteMisses();
+
+        assert(lower->getReads() + lower->getWrites() == descending
+               && "demand accesses at this level do not match what the level above sent down");
+    }
+
+    // ---- A write-through level never holds dirty data --------------------
+    // If one ever issues a writeback, the write policy plumbing is broken.
+    for (int n = 0; n < hierarchy_size; ++n) {
+        if (hierarchy.at(n)->getWriteStrat()
+            == Write_Strategy::Write_Through_No_Write_Allocate) {
+            if (n + 1 < hierarchy_size) {
+                // A write-through level can PASS ON writebacks from above,
+                // but must never ORIGINATE one. If you track writebacks issued
+                // separately from received, assert issued == received here.
+            }
+        }
+    }
+
+    // ---- Every reference is satisfied exactly once -----------------------
+    // Each program reference is served by the first level that has the block,
+    // or by memory if none do. Under write-through this does not hold: a write
+    // that hits L1 is counted as a hit AND still travels to memory.
+    bool any_write_through = false;
+    for (int n = 0; n < hierarchy_size; ++n)
+        if (hierarchy.at(n)->getWriteStrat()
+            == Write_Strategy::Write_Through_No_Write_Allocate)
+            any_write_through = true;
+
+    if (!any_write_through) {
+        int total_hits = 0;
+        for (int n = 0; n < hierarchy_size; ++n)
+            total_hits += hierarchy.at(n)->getReadHits()
+                        + hierarchy.at(n)->getWriteHits();
+        assert(total_hits + memory_reads == total_refs
+               && "hits plus memory reads do not account for every reference");
+    }
+
+    // ---- All-write-through: every program write reaches memory -----------
+    bool all_write_through = true;
+    for (int n = 0; n < hierarchy_size; ++n)
+        if (hierarchy.at(n)->getWriteStrat()
+            != Write_Strategy::Write_Through_No_Write_Allocate)
+            all_write_through = false;
+
+    if (all_write_through) {
+        assert(memory_writes == trace_write_count
+               && "not every program write reached memory in an all-write-through config");
+        assert(memory_reads == 0
+               && "no-write-allocate should never fetch on a write miss");
+    }
+
+    std::cout << "All invariants passed." << std::endl;
 }
