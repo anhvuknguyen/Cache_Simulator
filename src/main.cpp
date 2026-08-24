@@ -58,7 +58,7 @@ Cache_hierarchy* buildCacheHierarchy(){
 
         Level_config cfg;
 
-        int numBlocks = 0;
+        int blockSize = 0;
         int setSize = 0;
         int numSets = 0;
         Mapping_Technique mapTech;
@@ -81,10 +81,10 @@ Cache_hierarchy* buildCacheHierarchy(){
         do{
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Choose the number of blocks per line for L["+to_string(j+1)+"]: ";
-            cin >> numBlocks;
-        }while(numBlocks==0 || !isPowerOfTwo(numBlocks) || cin.fail());
-        cfg.num_blocks=numBlocks;
+            cout << "Choose block size for L["+to_string(j+1)+"] (bytes): ";
+            cin >> blockSize;
+        }while(blockSize==0 || !isPowerOfTwo(blockSize) || cin.fail());
+        cfg.num_blocks=blockSize;
 
         if(mapTech==Mapping_Technique::Direct){
             do{
@@ -131,7 +131,7 @@ Cache_hierarchy* buildCacheHierarchy(){
             do{
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Choose the size of your set for L["+to_string(j+1)+"]: ";
+                cout << "Choose associativity for L["+to_string(j+1)+"] (lines per set): ";
                 cin >> setSize;
             }while(setSize==0 || !isPowerOfTwo(setSize) || cin.fail());
             do{
@@ -287,6 +287,10 @@ void viewCacheHierarchyStats(){
     cout << cache_h->getStats() << endl;
 }
 
+void viewCacheHierarchyDetails(){
+    cout << cache_h->getDetails() << endl;
+}
+
 void resetCacheHierarchy(){
     cache_h->reset();
 }
@@ -299,6 +303,7 @@ int main() {
         cout << "[b] Build Cache Hierarchy" << endl;
         cout << "[v] View Cache Hierarchy" << endl;
         cout << "[s] View Cache Hierarchy Stats" << endl;
+        cout << "[p] View Cache Hierarchy Properties" << endl;
         cout << "[t] Trace File" << endl;
         cout << "[r] Reset Cache Hierarchy" << endl;
         cout << "[d] Delete Cache Hierarchy" << endl;
@@ -349,6 +354,15 @@ int main() {
             }
             else{
                 viewCacheHierarchyStats();
+            }
+        }
+        else if(choice=="p"){
+            if(cache_h==NULL){
+                cout << "\nCache has not been built!\n" << endl;
+                continue;
+            }
+            else{
+                viewCacheHierarchyDetails();
             }
         }
         else if(choice=="r"){

@@ -14,10 +14,11 @@ private:
     int tag;
     bool validBit;
     bool dirtyBit;
+    unsigned int block_address;
 public:
     Cache_line();
-    Cache_line(int t, bool valid, bool dirty);
-    void fill(int t, bool valid, bool dirty);
+    Cache_line(int t, bool valid, bool dirty, unsigned int blockAddress);
+    void fill(int t, bool valid, bool dirty, unsigned int blockAddress);
     void setTag(int t);
     void setValidBit(bool valid);
     void setDirtyBit(bool dirty);

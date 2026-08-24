@@ -29,6 +29,7 @@ public:
     int access(Cache_types::Operation op, unsigned int address);
     std::string getStats();
     std::string viewCache();
+    std::string getDetails();
     void reset();
 };
 

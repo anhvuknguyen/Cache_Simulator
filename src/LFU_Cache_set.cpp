@@ -81,12 +81,12 @@ Cache_types::Evict_Return_T LFU_Cache_set::evict(){
     }
 }
 
-int LFU_Cache_set::insert(int tag){
+int LFU_Cache_set::insert(unsigned int address, int tag){
     if(lineMap->find(tag)!=lineMap->end()){
         return -1;
     }
     incrementCapacity();
-    lineList->emplace_front(tag,true,false);
+    lineList->emplace_front(tag,true,false,address);
     lineMap->insert({tag,{1,lineList->begin()}});
     return 1;
 }

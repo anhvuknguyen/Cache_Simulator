@@ -16,7 +16,8 @@ private:
     int cache_Size;
     int num_Lines;
     int num_Sets;
-    int num_Blocks;
+    int set_Size;
+    int block_Size;
     
     //Address Split
     int num_TagBits;
@@ -43,14 +44,15 @@ private:
     std::set<int> blockSet;   //For Compulsory misses
     LRU_Cache_set *shadowCache; //For Capacity misses; every miss that is neither a compulsory miss nor a miss in the shadow cache is a conflict miss 
 
-    void validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
+    void validateInput(int setSize, int numSets, int blockSize, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy);
     std::unique_ptr<Cache_set> cacheFactory(int setSize, Cache_types::Replacement_Policy repPolicy);
 public:
-    Cache(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy, Cache_types::Write_Strategy writeStrat);
+    Cache(int setSize, int numSets, int blockSize, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy, Cache_types::Write_Strategy writeStrat);
     ~Cache();
     std::string viewCache();
     std::string viewShadowCache();
     Cache_types::Cache_level_stats getStats();
+    Cache_types::Cache_level_details getDetails();
 
     int getReadHits();
     int getWriteHits();
@@ -67,7 +69,7 @@ public:
 
     Cache_types::Miss_Type levelLookup(int index, int tag);
     Cache_types::Evict_Return_T levelEvict(int index);
-    void levelInsert(int index, int tag);
+    void levelInsert(unsigned int address, int index, int tag);
     Cache_types::Miss_Type insertToShadowCache(unsigned int address);
 
     void incrementReads();

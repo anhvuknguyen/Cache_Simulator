@@ -64,12 +64,12 @@ Cache_types::Evict_Return_T MRU_Cache_set::evict(){
     }
 }
 
-int MRU_Cache_set::insert(int tag){
+int MRU_Cache_set::insert(unsigned int address, int tag){
     if(lineMap->find(tag)!=lineMap->end()){
         return -1;
     }
     incrementCapacity();
-    lineList->emplace_front(tag,true,false);
+    lineList->emplace_front(tag,true,false,address);
     lineMap->insert({tag,lineList->begin()});
     return 1;
 }

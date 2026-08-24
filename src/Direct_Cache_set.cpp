@@ -43,7 +43,7 @@ Cache_types::Evict_Return_T Direct_Cache_set::evict(){
         int tag = line->getTag();
         int dirtyBit = line->getDirtyBit();
         
-        line->fill(0, 0, 0);
+        line->fill(0, 0, 0, 0);
         incrementEvictions();
         decrementCapacity();
         return {tag,dirtyBit};
@@ -53,9 +53,9 @@ Cache_types::Evict_Return_T Direct_Cache_set::evict(){
     }
 }
 
-int Direct_Cache_set::insert(int tag){
+int Direct_Cache_set::insert(unsigned int address, int tag){
     if(line->getTag()!=tag || line->getValidBit()==0){
-        line->fill(tag,1,0);
+        line->fill(tag,1,0,address);
         incrementCapacity();
         return 1;
     }
@@ -66,5 +66,5 @@ int Direct_Cache_set::insert(int tag){
 
 void Direct_Cache_set::reset(){
     Cache_set::reset();
-    line->fill(0,false,false);
+    line->fill(0,false,false,0);
 }

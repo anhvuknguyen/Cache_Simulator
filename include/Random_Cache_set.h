@@ -19,7 +19,7 @@ public:
 
     Cache_types::Miss_Type lookup(int tag) override;
     Cache_types::Evict_Return_T evict() override;
-    int insert(int tag) override;
+    int insert(unsigned int address, int tag) override;
     void reset() override;
 };
 

@@ -68,12 +68,12 @@ Cache_types::Evict_Return_T Random_Cache_set::evict(){
     }
 }
 
-int Random_Cache_set::insert(int tag){
+int Random_Cache_set::insert(unsigned int address, int tag){
     if(lookup(tag)==Miss_Type::Hit){
         return -1;
     }
     incrementCapacity();
-    lineArr->emplace_back(tag,true,false);
+    lineArr->emplace_back(tag,true,false,address);
     return 1;
 }
 

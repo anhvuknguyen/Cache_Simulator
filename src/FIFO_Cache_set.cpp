@@ -67,13 +67,13 @@ Cache_types::Evict_Return_T FIFO_Cache_set::evict(){
     }
 }
 
-int FIFO_Cache_set::insert(int tag){
+int FIFO_Cache_set::insert(unsigned int address, int tag){
     if(lineMap->find(tag)!=lineMap->end()){
         return -1;
     }
     incrementCapacity();
     lineQueue->emplace(tag);
-    lineMap->insert({tag,Cache_line(tag,true,false)});
+    lineMap->insert({tag,Cache_line(tag,true,false,address)});
     return 1;
 }
 

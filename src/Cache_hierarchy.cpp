@@ -43,6 +43,7 @@ int Cache_hierarchy::belady_loadFile(string traceFile){
 void Cache_hierarchy::read(int level, unsigned int address){
     //Base Case
     if(level==hierarchy_size){
+        cout<< "Main Memory Read" << endl;
         memory_reads++;
         return;
     }
@@ -71,6 +72,7 @@ void Cache_hierarchy::read(int level, unsigned int address){
 void Cache_hierarchy::write(int level, unsigned int address){
     //Base Case
     if(level==hierarchy_size){
+        cout<< "Main Memory Write" << endl;
         memory_writes++;
         return;
     }
@@ -94,12 +96,12 @@ void Cache_hierarchy::write(int level, unsigned int address){
             cout << "Write Hit in L["+to_string(level+1)+"]" << endl;
         }
         hierarchy.at(level)->setDirtyBit(index,tag);
-        cout << "Wrote in L["+to_string(level+1)+"]" << endl;
+        cout << "Wrote in L["+to_string(level+1)+"]; Block Address: "+to_string(address) << endl;
     }
     else if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Through_No_Write_Allocate){
         if(miss_T==Miss_Type::Hit){
             hierarchy.at(level)->incrementWriteHit();
-            cout << "Wrote in L["+to_string(level+1)+"]" << endl;
+            cout << "Wrote in L["+to_string(level+1)+"]; Block Address: "+to_string(address) << endl;
         }
         else if(miss_T==Miss_Type::Miss){
             hierarchy.at(level)->incrementWriteMiss();
@@ -113,6 +115,7 @@ void Cache_hierarchy::write(int level, unsigned int address){
 void Cache_hierarchy::writeback(int level, unsigned int address){
     //Base Case
     if(level==hierarchy_size){
+        cout<< "Main Memory Write" << endl;
         memory_writes++;
         return;
     }
@@ -133,11 +136,11 @@ void Cache_hierarchy::writeback(int level, unsigned int address){
             cout << "Writeback Hit in L["+to_string(level+1)+"]" << endl;
         }
         hierarchy.at(level)->setDirtyBit(index,tag);
-        cout << "Wrote in L["+to_string(level+1)+"]" << endl;
+        cout << "Wrote in L["+to_string(level+1)+"]; Block Address: "+to_string(address) << endl;
     }
     else if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Through_No_Write_Allocate){
         if(miss_T==Miss_Type::Hit){
-            cout << "Wrote in L["+to_string(level+1)+"]" << endl;
+            cout << "Wrote in L["+to_string(level+1)+"]; Block Address: "+to_string(address) << endl;
         }
         writeback(level+1,address);
     }
@@ -146,6 +149,13 @@ void Cache_hierarchy::writeback(int level, unsigned int address){
 void Cache_hierarchy::installAt(int level, int index, int tag){
     if(hierarchy.at(level)->indexIsFull(index)){
         Evict_Return_T eviction_return = hierarchy.at(level)->levelEvict(index);
+        unsigned int old_address = 0;
+        hierarchy.at(level)->recompose(old_address,index,eviction_return.tag);
+        cout<<"Eviction in L["+to_string(level+1)+"]; Block Address: "+to_string(old_address);
+        if(hierarchy.at(level)->getWriteStrat()==Write_Strategy::Write_Back_Write_Allocate){
+            cout<<"; Dirty Bit: "+to_string(eviction_return.dirtyBit);
+        }
+        cout<< endl;
         if(eviction_return.dirtyBit==1){
             unsigned int w_address = 0;
             hierarchy.at(level)->recompose(w_address,index,eviction_return.tag);
@@ -153,7 +163,10 @@ void Cache_hierarchy::installAt(int level, int index, int tag){
             writeback(level+1,w_address);
         }
     }
-    hierarchy.at(level)->levelInsert(index,tag);
+    unsigned int address = 0;
+    hierarchy.at(level)->recompose(address,index,tag);
+    cout<<"Installment in L["+to_string(level+1)+"]; Block Address: "+to_string(address) << endl;
+    hierarchy.at(level)->levelInsert(address, index,tag);
 }
 
 int Cache_hierarchy::access(Operation op, unsigned int address){
@@ -180,7 +193,7 @@ std::string Cache_hierarchy::viewCache(){
     string str;
     for(int i=0;i<hierarchy_size;i++){
         str+="L["+to_string(i+1)+"]:\n";
-        str+=hierarchy.at(i)->viewCache();
+        str+=hierarchy.at(i)->viewCache() + "\n";
     }
     return str;
 }
@@ -243,6 +256,123 @@ std::string Cache_hierarchy::getStats(){
 
     str+="\nMemory  Reads: "+to_string(memory_reads);
     str+="\nMemory Writes: "+to_string(memory_writes);
+    str+="\n";
+    return str;
+}
+
+string Cache_hierarchy::getDetails(){
+    string str;
+    vector<Cache_level_details> details_v;
+    for(int i=0;i<hierarchy_size;i++){
+        details_v.push_back(hierarchy.at(i)->getDetails());
+    }
+    str+="Cache Details:\n";
+    for(int i=0;i<hierarchy_size;i++){
+        str+="L["+to_string(i+1)+"]\t\t\t\t\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        Mapping_Technique m = details_v.at(i).mapping_tech;
+        if(m==Mapping_Technique::Direct){
+            str+="Mapping Technique: Direct         \t\t";
+        }
+        else if(m==Mapping_Technique::Fully_Associative){
+            str+="Mapping Technique: Fully_Associative \t\t";
+        }
+        else{
+            str+="Mapping Technique: Set_Associative \t\t";
+        }
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        Replacement_Policy r = details_v.at(i).replacement_pol;
+        if(r==Replacement_Policy::Belady){
+            str+="Replacement Policy: Belady's Algorithm\t\t";
+        }
+        else if(r==Replacement_Policy::Direct){
+            str+="                                    \t\t";
+        }
+        else if(r==Replacement_Policy::FIFO){
+            str+="Replacement Policy: First-In First-Out\t\t";
+        }
+        else if(r==Replacement_Policy::LFU){
+            str+="Replacement Policy: Least Frequently Used\t\t";
+        }
+        else if(r==Replacement_Policy::LIFO){
+            str+="Replacement Policy: Last-In First-Out\t\t";
+        }
+        else if(r==Replacement_Policy::LRU){
+            str+="Replacement Policy: Least Recently Used\t\t";
+        }
+        else if(r==Replacement_Policy::MRU){
+            str+="Replacement Policy: Most Recently Used\t\t";
+        }
+        else if(r==Replacement_Policy::Random){
+            str+="Replacement Policy: Random Replacement\t\t";
+        }
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        Write_Strategy w = details_v.at(i).write_strat;
+        if(w==Write_Strategy::Write_Back_Write_Allocate){
+            str+="Write Strategy: Write-Back\t\t\t";
+        }
+        if(w==Write_Strategy::Write_Through_No_Write_Allocate){
+            str+="Write Strategy: Write-Through\t\t\t";
+        }
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        Write_Strategy w = details_v.at(i).write_strat;
+        if(w==Write_Strategy::Write_Back_Write_Allocate){
+            str+="                Write-Allocate\t\t\t";
+        }
+        if(w==Write_Strategy::Write_Through_No_Write_Allocate){
+            str+="                No-Write-Allocate\t\t";
+        }
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+            str+="Cache Size: "+to_string(details_v.at(i).cache_Size)+" Bytes\t\t\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        Mapping_Technique m = details_v.at(i).mapping_tech;
+        if(m==Mapping_Technique::Direct){
+            str+="Num. Lines: "+to_string(details_v.at(i).total_lines)+"\t\t\t\t\t";
+        }
+
+        else{
+            str+="Num. Lines: "+to_string(details_v.at(i).total_lines)+"\t\t\t\t\t";
+        }
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+        Mapping_Technique m = details_v.at(i).mapping_tech;
+        if(m==Mapping_Technique::Direct){
+            str+="                      \t\t\t\t";
+        }
+
+        else{
+            str+="Lines Per Set: "+to_string(details_v.at(i).lines_Per_Set)+"\t\t\t\t";
+        }
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+            str+="Num. Sets: "+to_string(details_v.at(i).num_Sets)+" \t\t\t\t\t";
+    }
+    str+="\nAddress Split:\n";
+    for(int i=0;i<hierarchy_size;i++){
+            str+="Num. Tag Bits: "+to_string(details_v.at(i).num_TagBits)+"\t\t\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+            str+="Num. Index Bits: "+to_string(details_v.at(i).num_IndexBits)+"\t\t\t\t";
+    }
+    str+="\n";
+    for(int i=0;i<hierarchy_size;i++){
+            str+="Num. Offset Bits: "+to_string(details_v.at(i).num_OffsetBits)+"\t\t\t\t";
+    }
     str+="\n";
     return str;
 }

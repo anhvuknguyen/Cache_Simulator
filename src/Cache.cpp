@@ -23,7 +23,7 @@ using namespace Cache_utils;
 using namespace Cache_types;
 
 //Validate Constructor Inputs
-void Cache::validateInput(int setSize, int numSets, int numBlocks, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy){
+void Cache::validateInput(int setSize, int numSets, int blockSize, Cache_types::Mapping_Technique mapTech, Cache_types::Replacement_Policy repPolicy){
     //Direct mapping does not have a replacement policy
     if(mapTech==Mapping_Technique::Direct && repPolicy!=Replacement_Policy::Direct){
         throw invalid_argument("Direct Mapping Technique must use Direct Replacement Policy");
@@ -45,7 +45,7 @@ void Cache::validateInput(int setSize, int numSets, int numBlocks, Cache_types::
     if(!isPowerOfTwo(numSets)){
         throw invalid_argument("Number of sets must be a power of 2");
     }
-    if(!isPowerOfTwo(numBlocks)){
+    if(!isPowerOfTwo(blockSize)){
         throw invalid_argument("Number of blocks per line must be a power of 2");
     }
 }
@@ -82,19 +82,20 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
 }
 
 //Constructor
-Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech, Replacement_Policy repPolicy, Write_Strategy writeStrat){
+Cache::Cache(int setSize, int numSets, int blockSize, Mapping_Technique mapTech, Replacement_Policy repPolicy, Write_Strategy writeStrat){
 
     //Validate Inputs:
-    validateInput(setSize,numSets,numBlocks,mapTech,repPolicy);
+    validateInput(setSize,numSets,blockSize,mapTech,repPolicy);
     
     mapping_Technique = mapTech;
     replacement_Policy = repPolicy;
     write_Strategy = writeStrat;
 
-    cache_Size = setSize * numSets * numBlocks;
+    cache_Size = setSize * numSets * blockSize;
+    set_Size = setSize;
     num_Lines = setSize * numSets;
     num_Sets = numSets;
-    num_Blocks = numBlocks;
+    block_Size = blockSize;
     eviction_Count = 0;
     
     reads = 0;
@@ -108,7 +109,7 @@ Cache::Cache(int setSize, int numSets, int numBlocks, Mapping_Technique mapTech,
     capacity_Miss_Count=0;
     conflict_Miss_Count=0;
 
-    num_OffsetBits = log2(numBlocks);
+    num_OffsetBits = log2(blockSize);
     num_IndexBits = log2(numSets);
     num_TagBits = 32 - num_IndexBits - num_OffsetBits;
     if(num_TagBits < 1){
@@ -155,6 +156,23 @@ Cache_level_stats Cache::getStats(){
     x.capacity_Miss_Count = capacity_Miss_Count;
     x.conflict_Miss_Count = conflict_Miss_Count;
 
+    return x;
+}
+
+Cache_level_details Cache::getDetails(){
+    Cache_level_details x;
+    x.mapping_tech = mapping_Technique;
+    x.replacement_pol = replacement_Policy;
+    x.write_strat = write_Strategy;
+    x.cache_Size = cache_Size;
+    x.num_Sets = num_Sets;
+    x.total_lines = num_Lines;
+    x.lines_Per_Set = set_Size;
+    x.block_Size = block_Size;
+    x.num_TagBits = num_TagBits;
+    x.num_IndexBits = num_IndexBits;
+    x.num_OffsetBits = num_OffsetBits;
+    
     return x;
 }
 
@@ -230,8 +248,8 @@ Cache_types::Evict_Return_T Cache::levelEvict(int index){
     return cacheArr[index]->evict();
 }
 
-void Cache::levelInsert(int index, int tag){
-    cacheArr[index]->insert(tag);
+void Cache::levelInsert(unsigned int address, int index, int tag){
+    cacheArr[index]->insert(address, tag);
 }
 
 Miss_Type Cache::insertToShadowCache(unsigned int address){
@@ -241,7 +259,7 @@ Miss_Type Cache::insertToShadowCache(unsigned int address){
         if(shadowCache->isFull()){
             shadowCache->evict();
         }
-        shadowCache->insert(blockNumber);
+        shadowCache->insert(address, blockNumber);
     }
     return shadowMiss_T;
 }

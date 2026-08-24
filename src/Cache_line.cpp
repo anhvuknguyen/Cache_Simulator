@@ -5,19 +5,21 @@
 using namespace std;
 
 //Constructor
-Cache_line::Cache_line() : tag(0), validBit(false), dirtyBit(false){}
+Cache_line::Cache_line() : tag(0), validBit(false), dirtyBit(false), block_address(0){}
 
-Cache_line::Cache_line(int t, bool valid, bool dirty){
+Cache_line::Cache_line(int t, bool valid, bool dirty, unsigned int blockAddress){
     tag = t;
     validBit = valid;
     dirtyBit = dirty;
+    block_address = blockAddress;
 }
 
 //Fill - use when editing cache line
-void Cache_line::fill(int t, bool valid, bool dirty){
+void Cache_line::fill(int t, bool valid, bool dirty, unsigned int blockAddress){
     tag = t;
     validBit = valid;
     dirtyBit = dirty;
+    block_address = blockAddress;
 }
 
 //Getters & Setters
@@ -43,5 +45,6 @@ string Cache_line::toString(){
     string vStr = getValidBit() ? "1":"0";
     string dStr = getDirtyBit() ? "1":"0";
     string tagStr = to_string(getTag());
-    return "|Valid: " + vStr + " |Dirty: " + dStr + " |Tag: " + tagStr;
+    string BAstr = to_string(block_address);
+    return "|Valid: " + vStr + " |Dirty: " + dStr + " |Tag: " + tagStr + " |Address: "+BAstr;
 }

@@ -66,13 +66,13 @@ Cache_types::Evict_Return_T LIFO_Cache_set::evict(){
     }
 }
 
-int LIFO_Cache_set::insert(int tag){
+int LIFO_Cache_set::insert(unsigned int address, int tag){
     if(lineMap->find(tag)!=lineMap->end()){
         return -1;
     }
     incrementCapacity();
     lineStack->emplace(tag);
-    lineMap->insert({tag,Cache_line(tag,true,false)});
+    lineMap->insert({tag,Cache_line(tag,true,false,address)});
     return 1;
 }
 

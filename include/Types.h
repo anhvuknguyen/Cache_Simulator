@@ -76,5 +76,20 @@ namespace Cache_types{
         int capacity_Miss_Count;
         int conflict_Miss_Count;
     };
+
+    //Cache Level Details
+    struct Cache_level_details{
+        Mapping_Technique mapping_tech;
+        Replacement_Policy replacement_pol;
+        Write_Strategy write_strat;
+        int cache_Size;
+        int num_Sets;
+        int lines_Per_Set;
+        int total_lines;
+        int block_Size;
+        int num_TagBits;
+        int num_IndexBits;
+        int num_OffsetBits;
+    };
 }
 #endif
