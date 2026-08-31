@@ -15,6 +15,8 @@
 #include "Random_Cache_set.h"
 #include "LFU_Cache_set.h"
 #include "Belady_Cache_set.h"
+#include "SRRIP_Cache_set.h";
+#include "BRRIP_Cache_set.h";
 
 #include "Cache.h"
 #include "Cache_hierarchy.h"

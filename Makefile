@@ -8,7 +8,9 @@
 
 # Compiler and compiler flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -g
+CXXFLAGS = -std=c++17 -Wall -g -MMD -MP
+DEPS = $(OBJECTS:.o=.d)
+
 SRC_DIR = src
 INC_DIR = include
 OUT_DIR = bin
@@ -19,7 +21,7 @@ OBJ_DIR = obj
 EXECUTABLE = cacheSim
 
 # Source files (all .cpp files)
-SOURCES = 	$(TST_DIR)/main.cpp \
+SOURCES = 	$(SRC_DIR)/main.cpp \
 			$(SRC_DIR)/Cache_utils.cpp \
 			$(SRC_DIR)/Cache_line.cpp \
 			$(SRC_DIR)/Cache_set.cpp \
@@ -31,28 +33,13 @@ SOURCES = 	$(TST_DIR)/main.cpp \
 			$(SRC_DIR)/Random_Cache_set.cpp \
 			$(SRC_DIR)/LFU_Cache_set.cpp \
 			$(SRC_DIR)/Belady_Cache_set.cpp \
+			$(SRC_DIR)/SRRIP_Cache_set.cpp \
+			$(SRC_DIR)/BRRIP_Cache_set.cpp \
 			$(SRC_DIR)/Cache.cpp \
 			$(SRC_DIR)/Cache_hierarchy.cpp
 
 # Object files (automatically generated from source files)
 OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
-
-# Header files (for dependency tracking)
-HEADERS = 	$(INC_DIR)/Cache_library.h \
-			$(INC_DIR)/Cache_utils.h \
-			$(INC_DIR)/Types.h \
-			$(INC_DIR)/Cache_line.h \
-			$(INC_DIR)/Cache_set.h \
-			$(INC_DIR)/Direct_Cache_set.h \
-			$(INC_DIR)/LRU_Cache_set.h \
-			$(INC_DIR)/MRU_Cache_set.h \
-			$(INC_DIR)/FIFO_Cache_set.h \
-			$(INC_DIR)/LIFO_Cache_set.h \
-			$(INC_DIR)/Random_Cache_set.h \
-			$(INC_DIR)/LFU_Cache_set.h \
-			$(INC_DIR)/Belady_Cache_set.h \
-			$(INC_DIR)/Cache.h \
-			$(INC_DIR)/Cache_hierarchy.h
 
 # Default target - builds the executable
 all: $(EXECUTABLE)
@@ -71,11 +58,11 @@ $(EXECUTABLE): $(OBJECTS) | $(OUT_DIR)
 	@echo "Build complete! Run with: ./$(OUT_DIR)/$(EXECUTABLE)"
 
 # Compile .cpp files into .o object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	@echo "Compiling $<..."
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
 
-$(OBJ_DIR)/%.o: $(TST_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(TST_DIR)/%.cpp | $(OBJ_DIR)
 	@echo "Compiling $<..."
 	$(CXX) $(CXXFLAGS) -I$(INC_DIR) -c $< -o $@
 
@@ -99,3 +86,5 @@ help:
 
 # Phony targets (not real files)
 .PHONY: all clean rebuild help
+
+-include $(DEPS)

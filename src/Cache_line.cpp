@@ -32,6 +32,9 @@ void Cache_line::setValidBit(bool valid){
 void Cache_line::setDirtyBit(bool dirty){
     dirtyBit = dirty;
 }
+void Cache_line::setAddress(int address){
+    block_address = address;
+}
 int Cache_line::getTag(){
     return tag;
 }

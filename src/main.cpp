@@ -22,9 +22,9 @@ string MAPTECH_strings[] = {"Direct","Fully Associative","Set Associative"};
 int MAPTECH_size = 3;
 
 //Replacement Policy List
-Replacement_Policy REPPOLICY[] = {Replacement_Policy::Direct,Replacement_Policy::Random,Replacement_Policy::FIFO,Replacement_Policy::LIFO,Replacement_Policy::LRU,Replacement_Policy::MRU,Replacement_Policy::LFU, Replacement_Policy::Belady};
-string REPPOLICY_strings[] = {"Direct", "Random", "FIFO", "LIFO", "LRU", "MRU", "LFU", "Belady"};
-int REPPOLICY_size = 8;
+Replacement_Policy REPPOLICY[] = {Replacement_Policy::Direct,Replacement_Policy::Random,Replacement_Policy::FIFO,Replacement_Policy::LIFO,Replacement_Policy::LRU,Replacement_Policy::MRU,Replacement_Policy::LFU, Replacement_Policy::Belady, Replacement_Policy::SRRIP,Replacement_Policy::BRRIP};
+string REPPOLICY_strings[] = {"Direct", "Random", "FIFO", "LIFO", "LRU", "MRU", "LFU", "Belady","SRRIP","BRRIP"};
+int REPPOLICY_size = 10;
 
 Write_Strategy WRITESTRAT[] = {Write_Strategy::Write_Back_Write_Allocate,Write_Strategy::Write_Through_No_Write_Allocate};
 string WRITESTRAT_strings[] = {"Write-Back, Write-Allocate", "Write-Through, No-Write-Allocate"};

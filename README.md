@@ -11,6 +11,19 @@ Two consequences of not modeling data movement:
 - Block sizes may differ per level. In real hardware a mismatch would require multi-block fills (one L1 line spanning several L2 blocks); here a writeback carries a block-aligned address and the level below decomposes it with its own geometry. Configurations where a lower level has a *smaller* block than the level above are permitted but not faithfully modeled.
 - A 1-set × 1-line cache is degenerately both direct-mapped and fully-associative. Its miss classification depends on which `Mapping_Technique` was selected, since the fully-associative path skips the shadow cache. Avoid this geometry when comparing configurations.
 
+## Quickstart
+
+```bash
+git clone https://github.com/<your-username>/Cache_Simulator.git
+cd Cache_Simulator
+make
+./bin/cacheSim
+```
+
+The simulator prompts for the cache configuration — number of levels, and for each level the mapping technique, associativity, number of sets, block size, replacement policy, and write strategy — then asks for a trace file. Sample traces are in `traces/`.
+
+Requires `g++` with C++17 support and `make`.
+
 ## Features
 
 ### Mapping techniques
@@ -113,6 +126,7 @@ W 0x7fff5a3c
 ## Output Format
 
 **Sample of a single trace output:**
+```
 R 16
 Tag: 2 Index: 0
 Read Miss in L[1]
@@ -129,8 +143,10 @@ Eviction in L[1]; Block Address: 8; Dirty Bit: 1
 Writeback Hit in L[2]
 Wrote in L[2]; Block Address: 8
 Installment in L[1]; Block Address: 16
+```
 
 **Sample output of Cache Representation**
+```
 L[1]:
 ---Set 0---  Evictions: 9
 |Valid: 1 |Dirty: 1 |Tag: 4 |Address: 32
@@ -150,8 +166,10 @@ L[3]:
 |Valid: 1 |Dirty: 1 |Tag: 6 |Address: 24
 |Valid: 1 |Dirty: 0 |Tag: 4 |Address: 16
 |Valid: 1 |Dirty: 1 |Tag: 2 |Address: 8
+```
 
 **Sample Output of Cache Stats**
+```
 Cache Stats:
                     L[1]    L[2]    L[3]    
         Total Reads: 5       10      10      
@@ -168,6 +186,7 @@ Writebacks Received: 0       4       3
 
       Memory  Reads: 5
       Memory Writes: 0
+```
 
 ## Configuration constraints
 

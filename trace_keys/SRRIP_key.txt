@@ -1,0 +1,43 @@
+Config A: single level
+  L1: Mapping: Fully_Associative, Replacement: SRRIP (insert RRPV=2),
+      numSets=1, setSize=4, blockSize=8
+
+S1: Hits: 3,  Misses: 12, Compulsory: 9, Conflict: 0, Capacity: 3,  Evictions: 8
+    victims (by block): 10, 11, 0, 1, 2, 12, 13, 14
+S2: Hits: 0,  Misses: 9,  Compulsory: 5, Conflict: 0, Capacity: 4,  Evictions: 5
+    victims: 0, 1, 2, 3, 4
+S3: Hits: 4,  Misses: 6,  Compulsory: 6, Conflict: 0, Capacity: 0,  Evictions: 2
+    victims: 1, 2
+S4: Hits: 0,  Misses: 15, Compulsory: 5, Conflict: 0, Capacity: 10, Evictions: 11
+    victims: 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0
+S6: Hits: 4,  Misses: 8,  Compulsory: 8, Conflict: 0, Capacity: 0,  Evictions: 4
+    victims: 0, 1, 2, 3
+
+Config B: single level
+  L1: Mapping: Set_Associative, Replacement: SRRIP (insert RRPV=2),
+      numSets=2, setSize=4, blockSize=8
+
+S5: Hits: 0,  Misses: 8,  Compulsory: 5, Conflict: 3, Capacity: 0,  Evictions: 4
+    victims: 0, 1, 2, 3
+
+Config C: single level
+  L1: Mapping: Fully_Associative, Replacement: BRRIP with epsilon=0 (insert RRPV=3),
+      numSets=1, setSize=4, blockSize=8
+
+S1: Hits: 6,  Misses: 9,  Compulsory: 9, Conflict: 0, Capacity: 0,  Evictions: 5
+    victims: 10, 11, 12, 13, 14
+S2: Hits: 3,  Misses: 6,  Compulsory: 5, Conflict: 0, Capacity: 1,  Evictions: 2
+    victims: 0, 4
+S3: Hits: 4,  Misses: 6,  Compulsory: 6, Conflict: 0, Capacity: 0,  Evictions: 2
+    victims: 1, 4
+S4: Hits: 6,  Misses: 9,  Compulsory: 5, Conflict: 0, Capacity: 4,  Evictions: 5
+    victims: 0, 4, 0, 4, 0
+S6: Hits: 0,  Misses: 12, Compulsory: 8, Conflict: 0, Capacity: 4,  Evictions: 8
+    victims: 0, 1, 2, 3, 5, 4, 7, 6
+
+Config D: single level
+  L1: Mapping: Set_Associative, Replacement: BRRIP with epsilon=0 (insert RRPV=3),
+      numSets=2, setSize=4, blockSize=8
+
+S5: Hits: 2,  Misses: 6,  Compulsory: 5, Conflict: 1, Capacity: 0,  Evictions: 2
+    victims: 0, 4

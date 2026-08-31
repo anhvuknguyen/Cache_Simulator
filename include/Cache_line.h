@@ -22,6 +22,7 @@ public:
     void setTag(int t);
     void setValidBit(bool valid);
     void setDirtyBit(bool dirty);
+    void setAddress(int address);
     int getTag();
     bool getValidBit();
     bool getDirtyBit();

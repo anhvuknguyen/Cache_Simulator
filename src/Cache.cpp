@@ -17,6 +17,8 @@
 #include "Random_Cache_set.h"
 #include "LFU_Cache_set.h"
 #include "Belady_Cache_set.h"
+#include "SRRIP_Cache_set.h"
+#include "BRRIP_Cache_set.h"
 
 using namespace std;
 using namespace Cache_utils;
@@ -75,6 +77,12 @@ unique_ptr<Cache_set> Cache::cacheFactory(int setSize, Replacement_Policy repPol
     }
     else if(repPolicy==Replacement_Policy::Belady){
         return make_unique<Belady_Cache_set>(setSize,repPolicy);
+    }
+    else if(repPolicy==Replacement_Policy::SRRIP){
+        return make_unique<SRRIP_Cache_set>(setSize,repPolicy);
+    }
+    else if(repPolicy==Replacement_Policy::BRRIP){
+        return make_unique<BRRIP_Cache_set>(setSize,repPolicy);
     }
     else{
         throw invalid_argument("Provided replacement policy does not exist");

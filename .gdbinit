@@ -2,7 +2,7 @@
 # Place in the project root. Requires the following line in ~/.gdbinit:
 #   add-auto-load-safe-path /mnt/c/Projects/PersonalProjects/Cache_Simulator
 
-break main.cpp:268
+break main.cpp:272
 
 define advance_Trace
   continue

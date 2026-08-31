@@ -18,7 +18,11 @@ namespace Cache_types{
         MRU,
         LRU,
         LFU,
-        Belady
+        Belady,
+        QLRU,
+        BRRIP,
+        SRRIP,
+        DRRIP
     };
 
     //Write Strategy
@@ -60,6 +64,11 @@ namespace Cache_types{
     struct Evict_Return_T{
         int tag;
         int dirtyBit;
+    };
+
+    struct SRRIP_Pair{
+        Cache_line line;
+        int rrpv;
     };
 
     //Cache Level Stats
