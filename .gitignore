@@ -2,5 +2,5 @@
 .gdb_history
 .notes/
 .testing/
-bin/*
-obj/*
+bin/
+obj/
